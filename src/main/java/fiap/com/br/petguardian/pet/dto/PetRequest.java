@@ -1,0 +1,48 @@
+package fiap.com.br.petguardian.pet.dto;
+
+import fiap.com.br.petguardian.atendimento.AtendimentoStatus;
+import fiap.com.br.petguardian.familia.Familia;
+import fiap.com.br.petguardian.pet.Pet;
+import fiap.com.br.petguardian.pet.PetPorte;
+
+import fiap.com.br.petguardian.validation.EnumValidation;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record PetRequest(
+        @NotBlank
+        String nome,
+
+        @NotNull
+        @Min(0)
+        Integer idade,
+
+        @NotBlank
+        String raca,
+
+        @NotNull
+        @EnumValidation(enumClass = PetPorte.class)
+        PetPorte porte,
+
+        @NotNull
+        Character sexo,
+
+        @NotNull
+        Boolean castrado,
+
+        @NotNull
+        Long familiaId
+) {
+    public Pet toEntity(Familia familia) {
+        return Pet.builder()
+                .nome(nome)
+                .idade(idade)
+                .raca(raca)
+                .porte(porte)
+                .sexo(sexo)
+                .castrado(castrado)
+                .familia(familia)
+                .build();
+    }
+}

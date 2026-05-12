@@ -25,13 +25,13 @@ public class Tarefa {
     private String descricao;
     private LocalDateTime criacao;
     private LocalDateTime prazo;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private StatusTarefa status;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     @ManyToOne
-    @JoinColumn(name = "pet_id")
     private Pet pet;
 }

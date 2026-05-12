@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -26,16 +26,14 @@ public class Usuario {
     private String email;
     private String senha;
     private String telefone;
-    private boolean cuidado_pet;
 
     @OneToOne
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
     @ManyToOne
-    @JoinColumn(name = "familia_id")
     private Familia familia;
 
     @OneToMany(mappedBy = "usuario")
-    private List<Tarefa> tarefas;
+    private Set<Tarefa> tarefas;
 }

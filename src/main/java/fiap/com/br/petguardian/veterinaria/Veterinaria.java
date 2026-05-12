@@ -19,8 +19,8 @@ public class Veterinaria {
     private Long id;
 
     private String nome;
+    private String telefone;
 
     @OneToOne
-    @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 }

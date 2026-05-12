@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -24,14 +24,16 @@ public class Pet {
     private String nome;
     private Integer idade;
     private String raca;
-    private String porte;
+
+    @Enumerated(EnumType.STRING)
+    private PetPorte porte;
+
     private Character sexo;
     private Boolean castrado;
 
     @ManyToOne
-    @JoinColumn(name = "familia_id")
     private Familia familia;
 
     @OneToMany(mappedBy = "pet")
-    private List<Tarefa> tarefas;
+    private Set<Tarefa> tarefas;
 }

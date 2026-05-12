@@ -21,18 +21,21 @@ public class Atendimento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String tipo_atendimento;
+    @Enumerated(EnumType.STRING)
+    private TipoAtendimento tipo;
+
     private LocalDateTime data;
     private String anotacoes;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private AtendimentoStatus status;
+
     private Double valor;
 
     @ManyToOne
-    @JoinColumn(name = "pet_id")
     private Pet pet;
 
     @ManyToOne
-    @JoinColumn(name = "veterinaria_id")
     private Veterinaria veterinaria;
 
 }
