@@ -6,13 +6,11 @@ import fiap.com.br.petguardian.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Builder.Default;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -28,17 +26,15 @@ public class Familia {
 
     private String nome;
 
-    @Default
     @OneToMany(mappedBy = "familia")
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<Usuario> usuarios = new HashSet<>();
+    private Set<Usuario> usuarios ;
 
-    @Default
     @OneToMany(mappedBy = "familia")
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<Pet> pets = new HashSet<>();
+    private Set<Pet> pets;
 }

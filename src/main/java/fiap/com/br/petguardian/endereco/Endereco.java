@@ -29,13 +29,9 @@ public class Endereco {
 
     @OneToOne(mappedBy = "endereco")
     @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private Usuario usuario;
 
     @OneToOne(mappedBy = "endereco")
     @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private Veterinaria veterinaria;
 }

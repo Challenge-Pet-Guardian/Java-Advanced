@@ -36,14 +36,10 @@ public class Atendimento {
     private Double valor;
 
     @ManyToOne
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     @JsonIgnore
     private Pet pet;
 
     @ManyToOne
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     @JsonIgnore
     private Veterinaria veterinaria;
 

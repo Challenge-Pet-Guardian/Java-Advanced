@@ -7,9 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -34,13 +32,9 @@ public class Tarefa {
 
     @ManyToOne
     @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private Usuario usuario;
 
     @ManyToOne
     @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private Pet pet;
 }

@@ -1,5 +1,6 @@
 package fiap.com.br.petguardian.usuario;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fiap.com.br.petguardian.endereco.Endereco;
 import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.tarefa.Tarefa;
@@ -36,11 +37,13 @@ public class Usuario {
     private Endereco endereco;
 
     @ManyToOne
+    @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Familia familia;
 
     @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<Tarefa> tarefas;

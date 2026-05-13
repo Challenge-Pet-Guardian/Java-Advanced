@@ -1,5 +1,6 @@
 package fiap.com.br.petguardian.veterinaria;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fiap.com.br.petguardian.endereco.Endereco;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,6 @@ public class Veterinaria {
     private String telefone;
 
     @OneToOne
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
+    @JsonIgnore
     private Endereco endereco;
 }

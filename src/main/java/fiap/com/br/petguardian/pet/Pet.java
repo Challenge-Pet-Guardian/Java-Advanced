@@ -1,5 +1,6 @@
 package fiap.com.br.petguardian.pet;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.tarefa.Tarefa;
 import jakarta.persistence.*;
@@ -34,11 +35,13 @@ public class Pet {
     private Boolean castrado;
 
     @ManyToOne
+    @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Familia familia;
 
     @OneToMany(mappedBy = "pet")
+    @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<Tarefa> tarefas;
