@@ -37,8 +37,10 @@ public class TarefaService {
 
     public Tarefa update(Long id, TarefaRequest tarefaRequest) {
         findTarefaById(id);
+
         Usuario usuario = findUsuarioById(tarefaRequest.usuarioId());
         Pet pet = findPetById(tarefaRequest.petId());
+
         Tarefa tarefa = tarefaRequest.toEntity(usuario, pet);
         tarefa.setId(id);
 

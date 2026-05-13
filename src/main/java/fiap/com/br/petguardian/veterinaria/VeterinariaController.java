@@ -17,8 +17,11 @@ public class VeterinariaController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Veterinaria> findAll() {
-        return veterinariaService.findAll();
+    public List<VeterinariaResponse> findAll() {
+        return veterinariaService.findAll()
+                .stream()
+                .map(VeterinariaResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("{id}")

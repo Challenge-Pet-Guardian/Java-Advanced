@@ -17,8 +17,11 @@ public class AtendimentoController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Atendimento> findAll() {
-        return atendimentoService.findAll();
+    public List<AtendimentoResponse> findAll() {
+        return atendimentoService.findAll()
+                .stream()
+                .map(AtendimentoResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("{id}")

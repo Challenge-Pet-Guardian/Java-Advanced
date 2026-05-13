@@ -23,7 +23,7 @@ public record PetRequest(
 
         @NotNull
         @EnumValidation(enumClass = PetPorte.class)
-        PetPorte porte,
+        String porte,
 
         @NotNull
         Character sexo,
@@ -39,7 +39,7 @@ public record PetRequest(
                 .nome(nome)
                 .idade(idade)
                 .raca(raca)
-                .porte(porte)
+                .porte(PetPorte.valueOf(porte.toUpperCase()))
                 .sexo(sexo)
                 .castrado(castrado)
                 .familia(familia)

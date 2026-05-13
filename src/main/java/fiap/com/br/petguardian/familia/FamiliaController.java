@@ -17,8 +17,11 @@ public class FamiliaController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Familia> findAll() {
-        return familiaService.findAll();
+    public List<FamiliaResponse> findAll() {
+        return familiaService.findAll()
+                .stream()
+                .map(FamiliaResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("{id}")
@@ -37,6 +40,30 @@ public class FamiliaController {
     @ResponseStatus(HttpStatus.OK)
     public FamiliaResponse update(@PathVariable Long id, @Valid @RequestBody FamiliaRequest familiaRequest) {
         return FamiliaResponse.fromEntity(familiaService.update(id, familiaRequest));
+    }
+
+    @PostMapping("{familiaId}/usuarios/{usuarioId}")
+    @ResponseStatus(HttpStatus.OK)
+    public FamiliaResponse addUsuario(@PathVariable Long familiaId, @PathVariable Long usuarioId) {
+        return FamiliaResponse.fromEntity(familiaService.addUsuario(familiaId, usuarioId));
+    }
+
+    @DeleteMapping("{familiaId}/usuarios/{usuarioId}")
+    @ResponseStatus(HttpStatus.OK)
+    public FamiliaResponse removeUsuario(@PathVariable Long familiaId, @PathVariable Long usuarioId) {
+        return FamiliaResponse.fromEntity(familiaService.removeUsuario(familiaId, usuarioId));
+    }
+
+    @PostMapping("{familiaId}/pets/{petId}")
+    @ResponseStatus(HttpStatus.OK)
+    public FamiliaResponse addPet(@PathVariable Long familiaId, @PathVariable Long petId) {
+        return FamiliaResponse.fromEntity(familiaService.addPet(familiaId, petId));
+    }
+
+    @DeleteMapping("{familiaId}/pets/{petId}")
+    @ResponseStatus(HttpStatus.OK)
+    public FamiliaResponse removePet(@PathVariable Long familiaId, @PathVariable Long petId) {
+        return FamiliaResponse.fromEntity(familiaService.removePet(familiaId, petId));
     }
 
     @DeleteMapping("{id}")

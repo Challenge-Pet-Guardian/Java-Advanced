@@ -1,6 +1,5 @@
 package fiap.com.br.petguardian.tarefa.dto;
 
-import fiap.com.br.petguardian.atendimento.AtendimentoStatus;
 import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.tarefa.StatusTarefa;
 import fiap.com.br.petguardian.tarefa.Tarefa;

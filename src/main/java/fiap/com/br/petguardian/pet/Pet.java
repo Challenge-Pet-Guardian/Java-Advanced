@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Set;
 
@@ -32,8 +34,12 @@ public class Pet {
     private Boolean castrado;
 
     @ManyToOne
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Familia familia;
 
     @OneToMany(mappedBy = "pet")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<Tarefa> tarefas;
 }

@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -22,5 +24,7 @@ public class Veterinaria {
     private String telefone;
 
     @OneToOne
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Endereco endereco;
 }

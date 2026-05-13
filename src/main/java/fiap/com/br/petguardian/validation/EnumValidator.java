@@ -4,13 +4,12 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class EnumValidator implements ConstraintValidator<EnumValidation, Collection<?>> {
+public class EnumValidator implements ConstraintValidator<EnumValidation, String> {
     private Set<String> acceptedValues;
 
     @Override
@@ -21,12 +20,11 @@ public class EnumValidator implements ConstraintValidator<EnumValidation, Collec
     }
 
     @Override
-    public boolean isValid(Collection<?> value, ConstraintValidatorContext context) {
+    public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null) {
             return true;
         }
 
-        return value.stream()
-                .allMatch(item -> item != null && acceptedValues.contains(item.toString().toUpperCase()));
+        return acceptedValues.contains(value.toUpperCase());
     }
 }

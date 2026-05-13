@@ -7,7 +7,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Set;
 
@@ -29,11 +31,17 @@ public class Usuario {
 
     @OneToOne
     @JoinColumn(name = "endereco_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Endereco endereco;
 
     @ManyToOne
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Familia familia;
 
     @OneToMany(mappedBy = "usuario")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<Tarefa> tarefas;
 }

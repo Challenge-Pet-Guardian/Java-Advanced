@@ -17,8 +17,11 @@ public class TarefaController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Tarefa> findAll() {
-        return tarefaService.findAll();
+    public List<TarefaResponse> findAll() {
+        return tarefaService.findAll()
+                .stream()
+                .map(TarefaResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("{id}")

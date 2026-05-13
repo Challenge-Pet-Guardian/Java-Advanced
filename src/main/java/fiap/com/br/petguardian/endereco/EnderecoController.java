@@ -17,8 +17,11 @@ public class EnderecoController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Endereco> findAll() {
-        return enderecoService.findAll();
+    public List<EnderecoResponse> findAll() {
+        return enderecoService.findAll()
+                .stream()
+                .map(EnderecoResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("{id}")

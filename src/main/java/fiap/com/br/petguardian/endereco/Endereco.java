@@ -7,7 +7,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -27,9 +29,13 @@ public class Endereco {
 
     @OneToOne(mappedBy = "endereco")
     @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Usuario usuario;
 
     @OneToOne(mappedBy = "endereco")
     @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Veterinaria veterinaria;
 }

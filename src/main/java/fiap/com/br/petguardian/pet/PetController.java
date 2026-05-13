@@ -18,7 +18,10 @@ public class PetController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<PetResponse> findAll() {
-        return petService.findAll().stream().map(PetResponse::fromEntity).toList();
+        return petService.findAll()
+                .stream()
+                .map(PetResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("{id}")

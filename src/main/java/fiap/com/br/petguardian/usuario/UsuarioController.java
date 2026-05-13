@@ -17,8 +17,11 @@ public class UsuarioController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Usuario> findAll() {
-        return usuarioService.findAll();
+    public List<UsuarioResponse> findAll() {
+        return usuarioService.findAll()
+                .stream()
+                .map(UsuarioResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("{id}")
