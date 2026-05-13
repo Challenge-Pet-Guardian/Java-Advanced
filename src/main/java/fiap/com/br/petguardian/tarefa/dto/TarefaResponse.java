@@ -12,6 +12,7 @@ public record TarefaResponse(
         LocalDateTime criacao,
         LocalDateTime prazo,
         StatusTarefa status,
+        Long familiaId,
         Long usuarioId,
         Long petId
 ) {
@@ -23,6 +24,7 @@ public record TarefaResponse(
                 tarefa.getCriacao(),
                 tarefa.getPrazo(),
                 tarefa.getStatus(),
+                tarefa.getFamilia().getId(),
                 tarefa.getUsuario().getId(),
                 tarefa.getPet().getId()
         );

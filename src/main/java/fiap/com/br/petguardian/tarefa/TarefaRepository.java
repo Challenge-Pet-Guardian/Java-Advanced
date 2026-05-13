@@ -7,11 +7,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.Set;
 
 public interface TarefaRepository extends JpaRepository<Tarefa, Long> {
-    @Query("""
-            select distinct t.id
-            from Tarefa t
-            join t.pet p
-            where p.familia.id = :familiaId
-            """)
+    @Query("select t.id from Tarefa t where t.familia.id = :familiaId")
     Set<Long> findIdsByFamiliaId(@Param("familiaId") Long familiaId);
 }

@@ -13,6 +13,7 @@ public record AtendimentoResponse(
         String anotacoes,
         AtendimentoStatus status,
         Double valor,
+        Long familiaId,
         Long petId,
         Long veterinariaId
 ) {
@@ -24,6 +25,7 @@ public record AtendimentoResponse(
                 atendimento.getAnotacoes(),
                 atendimento.getStatus(),
                 atendimento.getValor(),
+                atendimento.getFamilia().getId(),
                 atendimento.getPet().getId(),
                 atendimento.getVeterinaria().getId()
         );

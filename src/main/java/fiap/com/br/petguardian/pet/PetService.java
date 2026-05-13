@@ -30,15 +30,10 @@ public class PetService {
     }
 
     public Pet update(Long id, PetRequest petRequest) {
-        Pet pet = findPetById(id);
+        findPetById(id);
         Familia familia = findFamiliaById(petRequest.familiaId());
-        pet.setNome(petRequest.nome());
-        pet.setIdade(petRequest.idade());
-        pet.setRaca(petRequest.raca());
-        pet.setPorte(PetPorte.valueOf(petRequest.porte().toUpperCase()));
-        pet.setSexo(petRequest.sexo());
-        pet.setCastrado(petRequest.castrado());
-        pet.setFamilia(familia);
+        Pet pet = petRequest.toEntity(familia);
+        pet.setId(id);
 
         return petRepository.save(pet);
     }

@@ -30,7 +30,7 @@ public class Familia {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<Usuario> usuarios ;
+    private Set<Usuario> usuarios;
 
     @OneToMany(mappedBy = "familia")
     @JsonIgnore

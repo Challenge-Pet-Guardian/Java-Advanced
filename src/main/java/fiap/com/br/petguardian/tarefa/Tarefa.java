@@ -1,13 +1,16 @@
 package fiap.com.br.petguardian.tarefa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -32,9 +35,17 @@ public class Tarefa {
 
     @ManyToOne
     @JsonIgnore
+    private Familia familia;
+
+    @ManyToOne
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Usuario usuario;
 
     @ManyToOne
     @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Pet pet;
 }

@@ -1,10 +1,8 @@
 package fiap.com.br.petguardian.pet.dto;
 
-import fiap.com.br.petguardian.atendimento.AtendimentoStatus;
 import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.pet.PetPorte;
-
 import fiap.com.br.petguardian.validation.EnumValidation;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

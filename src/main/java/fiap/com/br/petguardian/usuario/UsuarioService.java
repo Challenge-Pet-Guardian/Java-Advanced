@@ -41,8 +41,6 @@ public class UsuarioService {
         Endereco endereco = findEnderecoById(usuarioRequest.enderecoId());
         Usuario usuario = usuarioRequest.toEntity(endereco, familia);
         usuario.setId(id);
-        usuario.setFamilia(familia);
-        usuario.setEndereco(endereco);
 
         return usuarioRepository.save(usuario);
     }

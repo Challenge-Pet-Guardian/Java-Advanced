@@ -26,5 +26,7 @@ public class Veterinaria {
 
     @OneToOne
     @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Endereco endereco;
 }

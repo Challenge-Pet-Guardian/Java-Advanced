@@ -3,7 +3,7 @@ package fiap.com.br.petguardian.atendimento.dto;
 import fiap.com.br.petguardian.atendimento.Atendimento;
 import fiap.com.br.petguardian.atendimento.AtendimentoStatus;
 import fiap.com.br.petguardian.atendimento.TipoAtendimento;
-
+import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.validation.EnumValidation;
 import fiap.com.br.petguardian.veterinaria.Veterinaria;
@@ -35,15 +35,19 @@ public record AtendimentoRequest(
         Long petId,
 
         @NotNull
-        Long veterinariaId
+        Long veterinariaId,
+
+        @NotNull
+        Long familiaId
 ) {
-    public Atendimento toEntity(Pet pet, Veterinaria veterinaria) {
+    public Atendimento toEntity(Familia familia, Pet pet, Veterinaria veterinaria) {
         return Atendimento.builder()
                 .tipo(TipoAtendimento.valueOf(tipo.toUpperCase()))
                 .data(data)
                 .anotacoes(anotacoes)
                 .status(AtendimentoStatus.valueOf(status.toUpperCase()))
                 .valor(valor)
+                .familia(familia)
                 .pet(pet)
                 .veterinaria(veterinaria)
                 .build();

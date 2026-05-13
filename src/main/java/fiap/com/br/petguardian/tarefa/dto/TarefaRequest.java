@@ -1,5 +1,6 @@
 package fiap.com.br.petguardian.tarefa.dto;
 
+import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.tarefa.StatusTarefa;
 import fiap.com.br.petguardian.tarefa.Tarefa;
@@ -28,15 +29,19 @@ public record TarefaRequest(
         Long usuarioId,
 
         @NotNull
-        Long petId
+        Long petId,
+
+        @NotNull
+        Long familiaId
 ) {
-    public Tarefa toEntity(Usuario usuario, Pet pet) {
+    public Tarefa toEntity(Familia familia, Usuario usuario, Pet pet) {
         return Tarefa.builder()
                 .titulo(titulo)
                 .descricao(descricao)
                 .criacao(LocalDateTime.now())
                 .prazo(prazo)
                 .status(StatusTarefa.valueOf(status.toUpperCase()))
+                .familia(familia)
                 .usuario(usuario)
                 .pet(pet)
                 .build();
