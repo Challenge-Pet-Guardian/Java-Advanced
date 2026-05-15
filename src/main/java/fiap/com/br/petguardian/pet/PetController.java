@@ -2,6 +2,7 @@ package fiap.com.br.petguardian.pet;
 
 import fiap.com.br.petguardian.pet.dto.PetRequest;
 import fiap.com.br.petguardian.pet.dto.PetResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/pets")
 @RequiredArgsConstructor
+@Tag(name = "Pets")
 public class PetController {
     private final PetService petService;
 

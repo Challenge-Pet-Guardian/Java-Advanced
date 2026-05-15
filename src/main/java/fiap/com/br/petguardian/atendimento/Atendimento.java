@@ -30,7 +30,7 @@ public class Atendimento {
     private String anotacoes;
 
     @Enumerated(EnumType.STRING)
-    private AtendimentoStatus status;
+    private StatusAtendimento status;
 
     private Double valor;
 

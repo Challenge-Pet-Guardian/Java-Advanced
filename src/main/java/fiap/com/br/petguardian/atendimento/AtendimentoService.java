@@ -38,6 +38,7 @@ public class AtendimentoService {
         validarPetNaFamilia(familia, pet);
 
         Atendimento atendimento = atendimentoRequest.toEntity(familia, pet, veterinaria);
+        atendimento.setStatus(StatusAtendimento.PENDENTE);
         return atendimentoRepository.save(atendimento);
     }
 

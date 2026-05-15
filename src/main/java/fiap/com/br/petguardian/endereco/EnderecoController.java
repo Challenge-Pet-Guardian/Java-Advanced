@@ -2,6 +2,7 @@ package fiap.com.br.petguardian.endereco;
 
 import fiap.com.br.petguardian.endereco.dto.EnderecoRequest;
 import fiap.com.br.petguardian.endereco.dto.EnderecoResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/enderecos")
 @RequiredArgsConstructor
+@Tag(name = "Enderecos")
 public class EnderecoController {
     private final EnderecoService enderecoService;
 

@@ -25,7 +25,6 @@ public class UsuarioService {
 
     public Usuario findById(Long id) {
         return findUsuarioById(id);
-
     }
 
     public Usuario create(UsuarioRequest usuarioRequest) {

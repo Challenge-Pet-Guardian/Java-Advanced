@@ -1,16 +1,20 @@
 package fiap.com.br.petguardian.atendimento.dto;
 
 import fiap.com.br.petguardian.atendimento.Atendimento;
-import fiap.com.br.petguardian.atendimento.AtendimentoStatus;
+import fiap.com.br.petguardian.atendimento.StatusAtendimento;
 import fiap.com.br.petguardian.atendimento.TipoAtendimento;
 import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.pet.Pet;
+import fiap.com.br.petguardian.tarefa.StatusTarefa;
 import fiap.com.br.petguardian.validation.EnumValidation;
 import fiap.com.br.petguardian.veterinaria.Veterinaria;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
+
+import static java.util.Objects.isNull;
 
 public record AtendimentoRequest(
         @NotNull
@@ -18,13 +22,13 @@ public record AtendimentoRequest(
         String tipo,
 
         @NotNull
+        @FutureOrPresent(message = "Prazo não pode estar no passado.")
         LocalDateTime data,
 
         @Size(max = 300)
         String anotacoes,
 
-        @NotNull
-        @EnumValidation(enumClass =  AtendimentoStatus.class)
+        @EnumValidation(enumClass =  StatusAtendimento.class)
         String status,
 
         @NotNull
@@ -45,7 +49,7 @@ public record AtendimentoRequest(
                 .tipo(TipoAtendimento.valueOf(tipo.toUpperCase()))
                 .data(data)
                 .anotacoes(anotacoes)
-                .status(AtendimentoStatus.valueOf(status.toUpperCase()))
+                .status(isNull(status) || status.isBlank() ? StatusAtendimento.PENDENTE : StatusAtendimento.valueOf(status.toUpperCase()))
                 .valor(valor)
                 .familia(familia)
                 .pet(pet)

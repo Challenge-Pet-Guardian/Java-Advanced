@@ -1,7 +1,7 @@
 package fiap.com.br.petguardian.atendimento.dto;
 
 import fiap.com.br.petguardian.atendimento.Atendimento;
-import fiap.com.br.petguardian.atendimento.AtendimentoStatus;
+import fiap.com.br.petguardian.atendimento.StatusAtendimento;
 import fiap.com.br.petguardian.atendimento.TipoAtendimento;
 
 import java.time.LocalDateTime;
@@ -11,7 +11,7 @@ public record AtendimentoResponse(
         TipoAtendimento tipoAtendimento,
         LocalDateTime data,
         String anotacoes,
-        AtendimentoStatus status,
+        StatusAtendimento status,
         Double valor,
         Long familiaId,
         Long petId,

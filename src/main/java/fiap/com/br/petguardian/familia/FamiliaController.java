@@ -2,6 +2,7 @@ package fiap.com.br.petguardian.familia;
 
 import fiap.com.br.petguardian.familia.dto.FamiliaRequest;
 import fiap.com.br.petguardian.familia.dto.FamiliaResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/familias")
 @RequiredArgsConstructor
+@Tag(name = "Familias")
 public class FamiliaController {
     private final FamiliaService familiaService;
 

@@ -1,8 +1,7 @@
 package fiap.com.br.petguardian.atendimento;
 
-public enum AtendimentoStatus {
+public enum StatusAtendimento {
     PENDENTE,
-    EM_ANDAMENTO,
     CONCLUIDA,
-    CANCELADA
+    EXPIRADA
 }

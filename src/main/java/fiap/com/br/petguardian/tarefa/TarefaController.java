@@ -2,6 +2,7 @@ package fiap.com.br.petguardian.tarefa;
 
 import fiap.com.br.petguardian.tarefa.dto.TarefaRequest;
 import fiap.com.br.petguardian.tarefa.dto.TarefaResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/tarefas")
 @RequiredArgsConstructor
+@Tag(name = "Tarefas")
 public class TarefaController {
     private final TarefaService tarefaService;
 

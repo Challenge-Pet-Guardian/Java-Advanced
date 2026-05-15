@@ -4,7 +4,9 @@ import fiap.com.br.petguardian.endereco.Endereco;
 
 public record EnderecoResponse(
         Long id,
+        String cep,
         String rua,
+        int numero,
         String bairro,
         String cidade,
         String estado
@@ -12,7 +14,9 @@ public record EnderecoResponse(
     public static EnderecoResponse fromEntity(Endereco endereco) {
         return new EnderecoResponse(
                 endereco.getId(),
+                endereco.getCep(),
                 endereco.getRua(),
+                endereco.getNumero(),
                 endereco.getBairro(),
                 endereco.getCidade(),
                 endereco.getEstado()

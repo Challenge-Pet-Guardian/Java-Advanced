@@ -8,8 +8,11 @@ import fiap.com.br.petguardian.tarefa.Tarefa;
 import fiap.com.br.petguardian.usuario.Usuario;
 import fiap.com.br.petguardian.validation.EnumValidation;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+
+import static java.util.Objects.isNull;
 
 public record TarefaRequest(
         @NotBlank
@@ -19,9 +22,9 @@ public record TarefaRequest(
         String descricao,
 
         @NotNull
+        @FutureOrPresent(message = "Prazo não pode estar no passado.")
         LocalDateTime prazo,
 
-        @NotNull
         @EnumValidation(enumClass =  StatusTarefa.class)
         String status,
 
@@ -40,7 +43,7 @@ public record TarefaRequest(
                 .descricao(descricao)
                 .criacao(LocalDateTime.now())
                 .prazo(prazo)
-                .status(StatusTarefa.valueOf(status.toUpperCase()))
+                .status(isNull(status) || status.isBlank() ? StatusTarefa.PENDENTE : StatusTarefa.valueOf(status.toUpperCase()))
                 .familia(familia)
                 .usuario(usuario)
                 .pet(pet)

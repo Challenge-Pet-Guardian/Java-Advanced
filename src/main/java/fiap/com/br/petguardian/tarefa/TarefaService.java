@@ -4,6 +4,7 @@ import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.familia.FamiliaRepository;
 import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.pet.PetRepository;
+import fiap.com.br.petguardian.sequencia.SequenciaService;
 import fiap.com.br.petguardian.tarefa.dto.TarefaRequest;
 import fiap.com.br.petguardian.usuario.Usuario;
 import fiap.com.br.petguardian.usuario.UsuarioRepository;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,6 +23,7 @@ public class TarefaService {
     private final UsuarioRepository usuarioRepository;
     private final PetRepository petRepository;
     private final FamiliaRepository familiaRepository;
+    private final SequenciaService sequenciaService;
 
     public List<Tarefa> findAll() {
         return tarefaRepository.findAll();
@@ -38,7 +41,10 @@ public class TarefaService {
         validarConsistencia(familia, usuario, pet);
 
         Tarefa tarefa = tarefaRequest.toEntity(familia, usuario, pet);
-        return tarefaRepository.save(tarefa);
+        tarefa.setStatus(StatusTarefa.PENDENTE);
+        Tarefa tarefaSalva = tarefaRepository.save(tarefa);
+        sequenciaService.verificarERegistrarSequencia(usuario.getId());
+        return tarefaSalva;
     }
 
     public Tarefa update(Long id, TarefaRequest tarefaRequest) {
@@ -54,7 +60,9 @@ public class TarefaService {
         tarefa.setId(tarefaAtual.getId());
         tarefa.setCriacao(tarefaAtual.getCriacao());
 
-        return tarefaRepository.save(tarefa);
+        Tarefa tarefaSalva = tarefaRepository.save(tarefa);
+        sequenciaService.verificarERegistrarSequencia(usuario.getId());
+        return tarefaSalva;
     }
 
     public void delete(Long id) {
@@ -64,32 +72,26 @@ public class TarefaService {
 
     private void validarConsistencia(Familia familia, Usuario usuario, Pet pet) {
         if (usuario.getFamilia() == null || !usuario.getFamilia().getId().equals(familia.getId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Usuário com id " + usuario.getId() + " não pertence à família informada.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário com id " + usuario.getId() + " não pertence à família informada.");
         }
         if (pet.getFamilia() == null || !pet.getFamilia().getId().equals(familia.getId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Pet com id " + pet.getId() + " não pertence à família informada.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pet com id " + pet.getId() + " não pertence à família informada.");
         }
     }
 
     private Tarefa findTarefaById(Long id) {
-        return tarefaRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Tarefa com id " + id + " não encontrada."));
+        return tarefaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tarefa com id " + id + " não encontrada."));
     }
 
     private Pet findPetById(Long id) {
-        return petRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Pet com id " + id + " não encontrado."));
+        return petRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pet com id " + id + " não encontrado."));
     }
 
     private Usuario findUsuarioById(Long id) {
-        return usuarioRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário com id " + id + " não encontrado."));
+        return usuarioRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário com id " + id + " não encontrado."));
     }
 
     private Familia findFamiliaById(Long id) {
-        return familiaRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Família com id " + id + " não encontrada."));
+        return familiaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Família com id " + id + " não encontrada."));
     }
 }

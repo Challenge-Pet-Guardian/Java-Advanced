@@ -2,6 +2,7 @@ package fiap.com.br.petguardian.atendimento;
 
 import fiap.com.br.petguardian.atendimento.dto.AtendimentoRequest;
 import fiap.com.br.petguardian.atendimento.dto.AtendimentoResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/atendimentos")
 @RequiredArgsConstructor
+@Tag(name = "Atendimentos")
 public class AtendimentoController {
     private final AtendimentoService atendimentoService;
 

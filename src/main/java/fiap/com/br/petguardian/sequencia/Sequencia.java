@@ -1,8 +1,7 @@
-package fiap.com.br.petguardian.endereco;
+package fiap.com.br.petguardian.sequencia;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fiap.com.br.petguardian.usuario.Usuario;
-import fiap.com.br.petguardian.veterinaria.Veterinaria;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,33 +10,30 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDate;
+
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "enderecos")
-public class Endereco {
+@Table(name = "sequencias")
+public class Sequencia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String cep;
-    private String rua;
-    private int numero;
-    private String bairro;
-    private String cidade;
-    private String estado;
-
-    @OneToOne(mappedBy = "endereco")
+    @OneToOne
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Usuario usuario;
 
-    @OneToOne(mappedBy = "endereco")
-    @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Veterinaria veterinaria;
+    @Column(nullable = false)
+    private Integer SequenciaAtual;
+
+    @Column(nullable = false)
+    private Integer SequenciaMaxima;
+
+    private LocalDate DataUltimaAtividade;
 }
