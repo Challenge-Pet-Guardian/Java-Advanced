@@ -1,6 +1,7 @@
 package fiap.com.br.petguardian.endereco;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import fiap.com.br.petguardian.endereco.bairro.Bairro;
 import fiap.com.br.petguardian.usuario.Usuario;
 import fiap.com.br.petguardian.veterinaria.Veterinaria;
 import jakarta.persistence.*;
@@ -11,33 +12,47 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "enderecos")
+@Table(name = "endereco")
 public class Endereco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_endereco")
     private Long id;
 
+    @Column(nullable = false, length = 8)
     private String cep;
+
+    @Column(nullable = false, length = 5)
+    private String numero;
+
+    @Column(nullable = false, length = 150)
     private String rua;
-    private int numero;
-    private String bairro;
-    private String cidade;
-    private String estado;
 
-    @OneToOne(mappedBy = "endereco")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "bairro_id_bairro")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Bairro bairro;
+
+    @OneToMany(mappedBy = "endereco")
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Usuario usuario;
+    @Builder.Default
+    private Set<Usuario> usuarios = new HashSet<>();
 
-    @OneToOne(mappedBy = "endereco")
+    @OneToMany(mappedBy = "endereco")
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Veterinaria veterinaria;
+    @Builder.Default
+    private Set<Veterinaria> veterinarias = new HashSet<>();
 }

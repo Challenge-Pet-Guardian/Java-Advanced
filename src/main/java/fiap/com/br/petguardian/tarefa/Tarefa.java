@@ -1,8 +1,8 @@
 package fiap.com.br.petguardian.tarefa;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.pet.Pet;
+import fiap.com.br.petguardian.status.Status;
 import fiap.com.br.petguardian.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,31 +19,50 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "tarefas")
+@Table(name = "tarefa")
 public class Tarefa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_tarefa")
     private Long id;
 
+    @Column(nullable = false, length = 30)
     private String titulo;
+
+    @Column(name = "pontos_tarefa", nullable = false)
+    private Integer pontosTarefa;
+
+    @Column(nullable = false, length = 200)
     private String descricao;
+
+    @Column(nullable = false)
     private LocalDateTime criacao;
+
+    @Column(nullable = false)
     private LocalDateTime prazo;
 
-    @Enumerated(EnumType.STRING)
-    private StatusTarefa status;
+    private LocalDateTime conclusao;
 
     @ManyToOne
-    @JsonIgnore
-    private Familia familia;
+    @JoinColumn(name = "status_id_status", nullable = false)
+    private Status status;
 
     @ManyToOne
+    @JoinColumn(name = "usuario_id_criador", nullable = false)
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Usuario usuario;
+    private Usuario criador;
 
     @ManyToOne
+    @JoinColumn(name = "usuario_id_concluinte")
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Usuario concluinte;
+
+    @ManyToOne
+    @JoinColumn(name = "pet_id_pet", nullable = false)
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

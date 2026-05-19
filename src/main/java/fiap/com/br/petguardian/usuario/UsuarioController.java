@@ -2,6 +2,7 @@ package fiap.com.br.petguardian.usuario;
 
 import fiap.com.br.petguardian.usuario.dto.UsuarioRequest;
 import fiap.com.br.petguardian.usuario.dto.UsuarioResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/usuarios")
 @RequiredArgsConstructor
-@Tag(name = "Usuarios")
+@Tag(name = "Usuarios", description = "Gerenciamento de usuários")
 public class UsuarioController {
     private final UsuarioService usuarioService;
 
@@ -28,24 +29,28 @@ public class UsuarioController {
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Buscar usuário por ID")
     public UsuarioResponse findById(@PathVariable Long id) {
         return UsuarioResponse.fromEntity(usuarioService.findById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Criar usuário")
     public UsuarioResponse create(@Valid @RequestBody UsuarioRequest usuarioRequest) {
         return UsuarioResponse.fromEntity(usuarioService.create(usuarioRequest));
     }
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Atualizar usuário")
     public UsuarioResponse update(@PathVariable Long id, @Valid @RequestBody UsuarioRequest usuarioRequest) {
         return UsuarioResponse.fromEntity(usuarioService.update(id, usuarioRequest));
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Deletar usuário")
     public void delete(@PathVariable Long id) {
         usuarioService.delete(id);
     }

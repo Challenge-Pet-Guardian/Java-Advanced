@@ -1,7 +1,7 @@
 package fiap.com.br.petguardian.sequencia;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import fiap.com.br.petguardian.usuario.Usuario;
+import fiap.com.br.petguardian.familia.Familia;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,30 +10,33 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "sequencias")
+@Table(name = "sequencia")
 public class Sequencia {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "familia_id_familia")
     private Long id;
 
     @OneToOne
+    @MapsId
+    @JoinColumn(name = "familia_id_familia")
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Usuario usuario;
+    private Familia familia;
 
-    @Column(nullable = false)
-    private Integer SequenciaAtual;
+    @Column(name = "sequencia_atual", nullable = false)
+    private Integer sequenciaAtual;
 
-    @Column(nullable = false)
-    private Integer SequenciaMaxima;
+    @Column(name = "sequencia_maxima", nullable = false)
+    private Integer sequenciaMaxima;
 
-    private LocalDate DataUltimaAtividade;
+    @Column(name = "data_ultima_acao", nullable = false)
+    private LocalDateTime dataUltimaAtividade;
 }

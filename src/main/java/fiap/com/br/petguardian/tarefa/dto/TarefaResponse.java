@@ -1,31 +1,34 @@
 package fiap.com.br.petguardian.tarefa.dto;
 
 import fiap.com.br.petguardian.tarefa.Tarefa;
-import fiap.com.br.petguardian.tarefa.StatusTarefa;
 
 import java.time.LocalDateTime;
 
 public record TarefaResponse(
         Long id,
         String titulo,
+        Integer pontosTarefa,
         String descricao,
         LocalDateTime criacao,
         LocalDateTime prazo,
-        StatusTarefa status,
+        String status,
         Long familiaId,
-        Long usuarioId,
+        Long criadorId,
+        Long concluinteId,
         Long petId
 ) {
     public static TarefaResponse fromEntity(Tarefa tarefa) {
         return new TarefaResponse(
                 tarefa.getId(),
                 tarefa.getTitulo(),
+                tarefa.getPontosTarefa(),
                 tarefa.getDescricao(),
                 tarefa.getCriacao(),
                 tarefa.getPrazo(),
-                tarefa.getStatus(),
-                tarefa.getFamilia().getId(),
-                tarefa.getUsuario().getId(),
+                tarefa.getStatus().getNome_status().name(),
+                tarefa.getCriador().getFamilia().getId(),
+                tarefa.getCriador().getId(),
+                tarefa.getConcluinte() == null ? null : tarefa.getConcluinte().getId(),
                 tarefa.getPet().getId()
         );
     }

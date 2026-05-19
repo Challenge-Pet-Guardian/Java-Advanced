@@ -1,13 +1,13 @@
 package fiap.com.br.petguardian.sequencia;
 
+import fiap.com.br.petguardian.familia.Familia;
+import fiap.com.br.petguardian.familia.FamiliaRepository;
 import fiap.com.br.petguardian.sequencia.dto.SequenciaRequest;
-import fiap.com.br.petguardian.tarefa.StatusTarefa;
+import fiap.com.br.petguardian.status.Status;
+import fiap.com.br.petguardian.status.StatusService;
 import fiap.com.br.petguardian.tarefa.TarefaRepository;
-import fiap.com.br.petguardian.usuario.Usuario;
-import fiap.com.br.petguardian.usuario.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,84 +15,63 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class SequenciaService {
     private final SequenciaRepository sequenciaRepository;
-    private final UsuarioRepository usuarioRepository;
+    private final FamiliaRepository familiaRepository;
     private final TarefaRepository tarefaRepository;
+    private final StatusService statusService;
 
     @Transactional
-    public Sequencia obterSequenciaDoUsuario(Long usuarioId) {
-        Sequencia sequencia = buscarOuCriarSequencia(usuarioId);
+    public Sequencia obterSequenciaDaFamilia(Long familiaId) {
+        Sequencia sequencia = buscarOuCriarSequencia(familiaId);
         verificarQuebraDeSequencia(sequencia);
         return sequencia;
     }
 
     @Transactional
-    public void verificarERegistrarSequencia(Long usuarioId) {
-        if (usuarioId == null) {
-            return;
-        }
-
+    public void verificarERegistrarSequencia(Long familiaId) {
         LocalDate hoje = LocalDate.now();
         LocalDateTime inicioDia = hoje.atStartOfDay();
         LocalDateTime inicioProximoDia = hoje.plusDays(1).atStartOfDay();
 
-        long totalTarefasHoje = tarefaRepository.countByUsuarioIdAndPrazoBetween(usuarioId, inicioDia, inicioProximoDia);
+        long totalTarefasHoje = tarefaRepository.countByFamiliaIdAndPrazoBetween(familiaId, inicioDia, inicioProximoDia);
         if (totalTarefasHoje == 0) {
             return;
         }
 
-        long tarefasConcluidasHoje = tarefaRepository.countByUsuarioIdAndPrazoBetweenAndStatus(usuarioId, inicioDia, inicioProximoDia, StatusTarefa.CONCLUIDA);
+        Status concluida = statusService.findStatusByNome("CONCLUIDO");
+        long tarefasConcluidasHoje = tarefaRepository.countByFamiliaIdAndPrazoBetweenAndStatus(familiaId, inicioDia, inicioProximoDia, concluida);
 
         if (totalTarefasHoje == tarefasConcluidasHoje) {
-            registrarAtividade(usuarioId, hoje);
-        }
-    }
-
-    @Scheduled(cron = "0 5 0 * * *", zone = "America/Sao_Paulo")
-    @Transactional
-    public void verificarSequenciasQuebradas() {
-        LocalDate ontem = LocalDate.now().minusDays(1);
-        LocalDateTime inicioOntem = ontem.atStartOfDay();
-        LocalDateTime inicioHoje = ontem.plusDays(1).atStartOfDay();
-
-        Set<Long> usuariosComTarefasOntem = tarefaRepository.findDistinctUsuarioIdsComTarefasNoPeriodo(inicioOntem, inicioHoje);
-
-        for (Long usuarioId : usuariosComTarefasOntem) {
-            long totalTarefasOntem = tarefaRepository.countByUsuarioIdAndPrazoBetween(usuarioId, inicioOntem, inicioHoje);
-            long tarefasConcluidasOntem = tarefaRepository.countByUsuarioIdAndPrazoBetweenAndStatus(usuarioId, inicioOntem, inicioHoje, StatusTarefa.CONCLUIDA);
-
-            if (totalTarefasOntem > tarefasConcluidasOntem) {
-                Sequencia sequencia = sequenciaRepository.findByUsuarioId(usuarioId);
-                if (sequencia != null && sequencia.getSequenciaAtual() > 0) {
-                    sequencia.setSequenciaAtual(0);
-                    sequenciaRepository.save(sequencia);
-                }
-            }
+            registrarAtividade(familiaId, hoje);
         }
     }
 
     @Transactional
-    public Sequencia updateSequencia(Long usuarioId, SequenciaRequest sequenciaRequest) {
-        Sequencia sequencia = findSequenciaByUsuarioId(usuarioId);
-        Usuario usuario = findUsuarioById(sequenciaRequest.usuarioId());
+    public Sequencia updateSequencia(Long familiaId, SequenciaRequest sequenciaRequest) {
+        if (!familiaId.equals(sequenciaRequest.familiaId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "familiaId do caminho difere do corpo da requisicao.");
+        }
 
-        Sequencia sequenciaAtualizada = sequenciaRequest.toEntity(usuario);
+        Sequencia sequencia = findSequenciaByFamiliaId(familiaId);
+        Familia familia = findFamiliaById(sequenciaRequest.familiaId());
+
+        Sequencia sequenciaAtualizada = sequenciaRequest.toEntity(familia);
         sequenciaAtualizada.setId(sequencia.getId());
 
         return sequenciaRepository.save(sequenciaAtualizada);
     }
 
-    private void registrarAtividade(Long usuarioId, LocalDate hoje) {
-        Sequencia sequencia = buscarOuCriarSequencia(usuarioId);
+    private void registrarAtividade(Long familiaId, LocalDate hoje) {
+        Sequencia sequencia = buscarOuCriarSequencia(familiaId);
+        LocalDateTime hojeDateTime = hoje.atStartOfDay();
 
         if (sequencia.getDataUltimaAtividade() == null) {
             sequencia.setSequenciaAtual(1);
-            sequencia.setDataUltimaAtividade(hoje);
+            sequencia.setDataUltimaAtividade(hojeDateTime);
             if (sequencia.getSequenciaMaxima() < 1) {
                 sequencia.setSequenciaMaxima(1);
             }
@@ -100,17 +79,19 @@ public class SequenciaService {
             return;
         }
 
-        if (sequencia.getDataUltimaAtividade().isEqual(hoje)) {
+        LocalDate ultimaAtividade = sequencia.getDataUltimaAtividade().toLocalDate();
+
+        if (ultimaAtividade.isEqual(hoje)) {
             return;
         }
 
-        if (sequencia.getDataUltimaAtividade().isEqual(hoje.minusDays(1))) {
+        if (ultimaAtividade.isEqual(hoje.minusDays(1))) {
             sequencia.setSequenciaAtual(sequencia.getSequenciaAtual() + 1);
         } else {
             sequencia.setSequenciaAtual(1);
         }
 
-        sequencia.setDataUltimaAtividade(hoje);
+        sequencia.setDataUltimaAtividade(hojeDateTime);
         if (sequencia.getSequenciaAtual() > sequencia.getSequenciaMaxima()) {
             sequencia.setSequenciaMaxima(sequencia.getSequenciaAtual());
         }
@@ -118,12 +99,12 @@ public class SequenciaService {
         sequenciaRepository.save(sequencia);
     }
 
-    private Sequencia buscarOuCriarSequencia(Long usuarioId) {
-        Sequencia sequencia = sequenciaRepository.findByUsuarioId(usuarioId);
+    private Sequencia buscarOuCriarSequencia(Long familiaId) {
+        Sequencia sequencia = sequenciaRepository.findByFamiliaId(familiaId);
         if (sequencia == null) {
-            Usuario usuario = findUsuarioById(usuarioId);
-            SequenciaRequest sequenciaRequest = new SequenciaRequest(0, 0, null, usuarioId);
-            sequencia = sequenciaRepository.save(sequenciaRequest.toEntity(usuario));
+            Familia familia = findFamiliaById(familiaId);
+            SequenciaRequest sequenciaRequest = new SequenciaRequest(0, 0, LocalDateTime.now(), familiaId);
+            sequencia = sequenciaRepository.save(sequenciaRequest.toEntity(familia));
         }
         return sequencia;
     }
@@ -134,23 +115,32 @@ public class SequenciaService {
         }
 
         LocalDate hoje = LocalDate.now();
-        long diasSemAtividade = ChronoUnit.DAYS.between(sequencia.getDataUltimaAtividade(), hoje);
+        LocalDate ultimaAtividade = sequencia.getDataUltimaAtividade().toLocalDate();
+        long diasSemAtividade = ChronoUnit.DAYS.between(ultimaAtividade, hoje);
 
         if (diasSemAtividade > 1 && sequencia.getSequenciaAtual() > 0) {
-            sequencia.setSequenciaAtual(0);
-            sequenciaRepository.save(sequencia);
+            LocalDateTime inicioPeriodo = ultimaAtividade.plusDays(1).atStartOfDay();
+            LocalDateTime fimPeriodo = hoje.atStartOfDay();
+
+            long totalTarefasNoPeriodo = tarefaRepository.countByFamiliaIdAndPrazoBetween(
+                    sequencia.getId(), inicioPeriodo, fimPeriodo);
+
+            if (totalTarefasNoPeriodo > 0) {
+                sequencia.setSequenciaAtual(0);
+                sequenciaRepository.save(sequencia);
+            }
         }
     }
 
-    private Sequencia findSequenciaByUsuarioId(Long usuarioId) {
-        Sequencia sequencia = sequenciaRepository.findByUsuarioId(usuarioId);
+    private Sequencia findSequenciaByFamiliaId(Long familiaId) {
+        Sequencia sequencia = sequenciaRepository.findByFamiliaId(familiaId);
         if (sequencia == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sequencia não encontrada para o usuário.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sequencia nao encontrada para a familia.");
         }
         return sequencia;
     }
 
-    private Usuario findUsuarioById(Long id) {
-        return usuarioRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario com id " + id + " nao encontrado."));
+    private Familia findFamiliaById(Long id) {
+        return familiaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Familia com id " + id + " nao encontrada."));
     }
 }

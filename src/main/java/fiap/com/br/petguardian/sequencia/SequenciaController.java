@@ -16,15 +16,15 @@ public class SequenciaController {
 
     private final SequenciaService sequenciaService;
 
-    @GetMapping("/usuario/{usuarioId}")
+    @GetMapping("/familia/{familiaId}")
     @ResponseStatus(HttpStatus.OK)
-    public SequenciaResponse getSequenciaByUsuario(@PathVariable Long usuarioId) {
-        return SequenciaResponse.fromEntity(sequenciaService.obterSequenciaDoUsuario(usuarioId));
+    public SequenciaResponse getSequenciaByFamilia(@PathVariable Long familiaId) {
+        return SequenciaResponse.fromEntity(sequenciaService.obterSequenciaDaFamilia(familiaId));
     }
 
-    @PutMapping("/usuario/{usuarioId}")
+    @PutMapping("/familia/{familiaId}")
     @ResponseStatus(HttpStatus.OK)
-    public SequenciaResponse updateSequenciaByUsuario(@PathVariable Long usuarioId, @Valid @RequestBody SequenciaRequest sequenciaRequest) {
-        return SequenciaResponse.fromEntity(sequenciaService.updateSequencia(usuarioId, sequenciaRequest));
+    public SequenciaResponse updateSequenciaByFamilia(@PathVariable Long familiaId, @Valid @RequestBody SequenciaRequest sequenciaRequest) {
+        return SequenciaResponse.fromEntity(sequenciaService.updateSequencia(familiaId, sequenciaRequest));
     }
 }

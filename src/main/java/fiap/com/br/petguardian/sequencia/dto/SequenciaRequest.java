@@ -1,11 +1,11 @@
 package fiap.com.br.petguardian.sequencia.dto;
 
 import fiap.com.br.petguardian.sequencia.Sequencia;
-import fiap.com.br.petguardian.usuario.Usuario;
+import fiap.com.br.petguardian.familia.Familia;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record SequenciaRequest(
         @NotNull
@@ -16,17 +16,17 @@ public record SequenciaRequest(
         @PositiveOrZero
         Integer sequenciaMaxima,
 
-        LocalDate dataUltimaAtividade,
+        LocalDateTime dataUltimaAtividade,
 
         @NotNull
-        Long usuarioId
+        Long familiaId
 ) {
-    public Sequencia toEntity(Usuario usuario) {
+    public Sequencia toEntity(Familia familia) {
         return Sequencia.builder()
-                .SequenciaAtual(sequenciaAtual)
-                .SequenciaMaxima(sequenciaMaxima)
-                .DataUltimaAtividade(dataUltimaAtividade)
-                .usuario(usuario)
+                .sequenciaAtual(sequenciaAtual)
+                .sequenciaMaxima(sequenciaMaxima)
+                .dataUltimaAtividade(dataUltimaAtividade)
+                .familia(familia)
                 .build();
     }
 }

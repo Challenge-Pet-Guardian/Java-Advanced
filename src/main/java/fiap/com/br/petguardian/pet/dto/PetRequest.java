@@ -1,8 +1,8 @@
 package fiap.com.br.petguardian.pet.dto;
 
-import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.pet.PetPorte;
+import fiap.com.br.petguardian.pet.raca.Raca;
 import fiap.com.br.petguardian.validation.EnumValidation;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -30,17 +30,16 @@ public record PetRequest(
         Boolean castrado,
 
         @NotNull
-        Long familiaId
+        Long usuarioId
 ) {
-    public Pet toEntity(Familia familia) {
+    public Pet toEntity(Raca racaObj) {
         return Pet.builder()
                 .nome(nome)
                 .idade(idade)
-                .raca(raca)
+                .raca(racaObj)
                 .porte(PetPorte.valueOf(porte.toUpperCase()))
                 .sexo(sexo)
                 .castrado(castrado)
-                .familia(familia)
                 .build();
     }
 }

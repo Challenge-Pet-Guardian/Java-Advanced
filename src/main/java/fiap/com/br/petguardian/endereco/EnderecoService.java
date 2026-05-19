@@ -1,7 +1,13 @@
 package fiap.com.br.petguardian.endereco;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import fiap.com.br.petguardian.endereco.bairro.Bairro;
+import fiap.com.br.petguardian.endereco.bairro.BairroRepository;
+import fiap.com.br.petguardian.endereco.cidade.Cidade;
+import fiap.com.br.petguardian.endereco.cidade.CidadeRepository;
 import fiap.com.br.petguardian.endereco.dto.EnderecoRequest;
+import fiap.com.br.petguardian.endereco.estado.Estado;
+import fiap.com.br.petguardian.endereco.estado.EstadoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,6 +23,9 @@ public class EnderecoService {
     private static final String VIACEP_ENDPOINT = "https://viacep.com.br/ws/{cep}/json/";
 
     private final EnderecoRepository enderecoRepository;
+    private final EstadoRepository estadoRepository;
+    private final CidadeRepository cidadeRepository;
+    private final BairroRepository bairroRepository;
     private final RestClient restClient = RestClient.create();
 
     public List<Endereco> findAll() {
@@ -28,7 +37,7 @@ public class EnderecoService {
     }
 
     public Endereco create(EnderecoRequest enderecoRequest) {
-        return enderecoRepository.save(buildEnderecoFromCep(enderecoRequest));
+        return findOrCreateByCepAndNumero(enderecoRequest);
     }
 
     public Endereco update(Long id, EnderecoRequest enderecoRequest) {
@@ -43,24 +52,53 @@ public class EnderecoService {
         enderecoRepository.deleteById(id);
     }
 
+    public Endereco findOrCreateByCepAndNumero(EnderecoRequest enderecoRequest) {
+        ResolvedAddress resolvedAddress = resolveAddressFromCep(enderecoRequest.cep());
+        return enderecoRepository.findByCepAndNumeroAndBairroId(enderecoRequest.cep(), enderecoRequest.numero(), resolvedAddress.bairro().getId())
+                .orElseGet(() -> enderecoRepository.save(enderecoRequest.toEntity(resolvedAddress.rua(), resolvedAddress.bairro())));
+    }
+
     private Endereco findEnderecoById(Long id) {
         return enderecoRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereço com id " + id + " não encontrado."));
     }
 
     private Endereco buildEnderecoFromCep(EnderecoRequest enderecoRequest) {
+        ResolvedAddress resolvedAddress = resolveAddressFromCep(enderecoRequest.cep());
+        return enderecoRequest.toEntity(resolvedAddress.rua(), resolvedAddress.bairro());
+    }
+
+    private ResolvedAddress resolveAddressFromCep(String cep) {
         try {
             var response = restClient.get()
-                    .uri(VIACEP_ENDPOINT, enderecoRequest.cep())
+                    .uri(VIACEP_ENDPOINT, cep)
                     .retrieve()
                     .body(ViaCepResponse.class);
 
-            if (response == null || Boolean.TRUE.equals(response.erro())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CEP " + enderecoRequest.cep() + " não encontrado.");
+            if (response == null || Boolean.TRUE.equals(response.erro())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CEP " + cep + " não encontrado.");
 
-            return enderecoRequest.toEntity(response.logradouro(), response.bairro(), response.localidade(), response.estado());
+            Estado estado = findOrCreateEstado(response.estado());
+            Cidade cidade = findOrCreateCidade(response.localidade(), estado);
+            Bairro bairro = findOrCreateBairro(response.bairro(), cidade);
 
+            return new ResolvedAddress(response.logradouro(), bairro);
         } catch (RestClientException error) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao consultar o serviço de CEP.", error);
         }
+    }
+
+    private Estado findOrCreateEstado(String nomeEstado) {
+        return estadoRepository.findByNomeIgnoreCase(nomeEstado)
+                .orElseGet(() -> estadoRepository.save(Estado.builder().nome(nomeEstado).build()));
+    }
+
+    private Cidade findOrCreateCidade(String nomeCidade, Estado estado) {
+        return cidadeRepository.findByNomeIgnoreCaseAndEstadoId(nomeCidade, estado.getId())
+                .orElseGet(() -> cidadeRepository.save(Cidade.builder().nome(nomeCidade).estado(estado).build()));
+    }
+
+    private Bairro findOrCreateBairro(String nomeBairro, Cidade cidade) {
+        return bairroRepository.findByNomeIgnoreCaseAndCidadeId(nomeBairro, cidade.getId())
+                .orElseGet(() -> bairroRepository.save(Bairro.builder().nome(nomeBairro).cidade(cidade).build()));
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -71,4 +109,6 @@ public class EnderecoService {
             String estado,
             Boolean erro
     ) {}
+
+    private record ResolvedAddress(String rua, Bairro bairro) {}
 }

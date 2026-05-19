@@ -1,7 +1,6 @@
 package fiap.com.br.petguardian.familia;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,12 +17,14 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "familias")
+@Table(name = "familia")
 public class Familia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_familia")
     private Long id;
 
+    @Column(name = "nome_familia", nullable = false, length = 30)
     private String nome;
 
     @OneToMany(mappedBy = "familia")
@@ -31,10 +32,4 @@ public class Familia {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<Usuario> usuarios;
-
-    @OneToMany(mappedBy = "familia")
-    @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Set<Pet> pets;
 }

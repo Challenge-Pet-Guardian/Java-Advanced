@@ -1,22 +1,24 @@
 package fiap.com.br.petguardian.tarefa.dto;
 
-import fiap.com.br.petguardian.familia.Familia;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fiap.com.br.petguardian.pet.Pet;
-import fiap.com.br.petguardian.tarefa.StatusTarefa;
+import fiap.com.br.petguardian.status.EnumStatus;
 import fiap.com.br.petguardian.tarefa.Tarefa;
-
 import fiap.com.br.petguardian.usuario.Usuario;
 import fiap.com.br.petguardian.validation.EnumValidation;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
-import static java.util.Objects.isNull;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record TarefaRequest(
         @NotBlank
         String titulo,
+
+        @NotBlank
+        Integer pontosTarefa,
 
         @NotBlank
         String descricao,
@@ -25,27 +27,26 @@ public record TarefaRequest(
         @FutureOrPresent(message = "Prazo não pode estar no passado.")
         LocalDateTime prazo,
 
-        @EnumValidation(enumClass =  StatusTarefa.class)
-        String status,
-
         @NotNull
-        Long usuarioId,
+        Long criadorId,
 
         @NotNull
         Long petId,
 
-        @NotNull
-        Long familiaId
+        @NotBlank
+        @EnumValidation(enumClass = EnumStatus.class)
+        String status,
+
+        Long concluinteId
 ) {
-    public Tarefa toEntity(Familia familia, Usuario usuario, Pet pet) {
+    public Tarefa toEntity(Usuario criador, Pet pet) {
         return Tarefa.builder()
                 .titulo(titulo)
+                .pontosTarefa(pontosTarefa)
                 .descricao(descricao)
                 .criacao(LocalDateTime.now())
                 .prazo(prazo)
-                .status(isNull(status) || status.isBlank() ? StatusTarefa.PENDENTE : StatusTarefa.valueOf(status.toUpperCase()))
-                .familia(familia)
-                .usuario(usuario)
+                .criador(criador)
                 .pet(pet)
                 .build();
     }

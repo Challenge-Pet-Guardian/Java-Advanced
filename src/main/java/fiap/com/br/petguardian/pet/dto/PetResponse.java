@@ -10,19 +10,17 @@ public record PetResponse(
         String raca,
         PetPorte porte,
         Character sexo,
-        Boolean castrado,
-        Long familiaId
+        Boolean castrado
 ) {
     public static PetResponse fromEntity(Pet pet) {
         return new PetResponse(
                 pet.getId(),
                 pet.getNome(),
                 pet.getIdade(),
-                pet.getRaca(),
+                pet.getRaca().getNome(),
                 pet.getPorte(),
                 pet.getSexo(),
-                pet.getCastrado(),
-                pet.getFamilia() != null ? pet.getFamilia().getId() : null
+                pet.getCastrado()
         );
     }
 }

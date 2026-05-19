@@ -8,7 +8,8 @@ public record UsuarioResponse(
         Long id,
         String nome,
         String email,
-        String telefone,
+        String ddd,
+        String numeroTelefone,
         Familia familia,
         Endereco endereco
 ) {
@@ -17,7 +18,8 @@ public record UsuarioResponse(
                 usuario.getId(),
                 usuario.getNome(),
                 usuario.getEmail(),
-                usuario.getTelefone(),
+                usuario.getTelefone().getDdd(),
+                usuario.getTelefone().getNumero(),
                 usuario.getFamilia(),
                 usuario.getEndereco()
         );
