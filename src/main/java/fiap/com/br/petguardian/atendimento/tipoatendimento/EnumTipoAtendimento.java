@@ -1,4 +1,4 @@
-package fiap.com.br.petguardian.tipoatendimento;
+package fiap.com.br.petguardian.atendimento.tipoatendimento;
 
 public enum EnumTipoAtendimento {
     CONSULTA,

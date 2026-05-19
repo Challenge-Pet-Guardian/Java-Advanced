@@ -2,7 +2,7 @@ package fiap.com.br.petguardian.atendimento.dto;
 
 import fiap.com.br.petguardian.atendimento.Atendimento;
 
-import fiap.com.br.petguardian.tipoatendimento.EnumTipoAtendimento;
+import fiap.com.br.petguardian.atendimento.tipoatendimento.EnumTipoAtendimento;
 
 import java.time.LocalDateTime;
 

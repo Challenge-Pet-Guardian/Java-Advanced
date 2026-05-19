@@ -3,8 +3,8 @@ package fiap.com.br.petguardian.atendimento;
 import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.status.Status;
 import fiap.com.br.petguardian.status.StatusService;
-import fiap.com.br.petguardian.tipoatendimento.TipoAtendimento;
-import fiap.com.br.petguardian.tipoatendimento.TipoAtendimentoService;
+import fiap.com.br.petguardian.atendimento.tipoatendimento.TipoAtendimento;
+import fiap.com.br.petguardian.atendimento.tipoatendimento.TipoAtendimentoService;
 
 import fiap.com.br.petguardian.atendimento.dto.AtendimentoRequest;
 import fiap.com.br.petguardian.familia.FamiliaRepository;

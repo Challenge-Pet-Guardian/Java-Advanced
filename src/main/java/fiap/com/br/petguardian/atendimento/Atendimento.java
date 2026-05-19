@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.status.Status;
 import fiap.com.br.petguardian.veterinaria.Veterinaria;
-import fiap.com.br.petguardian.tipoatendimento.TipoAtendimento;
+import fiap.com.br.petguardian.atendimento.tipoatendimento.TipoAtendimento;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
