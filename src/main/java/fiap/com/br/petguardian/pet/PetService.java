@@ -1,5 +1,6 @@
 package fiap.com.br.petguardian.pet;
 
+import fiap.com.br.petguardian.exception.ResourceNotFoundException;
 import fiap.com.br.petguardian.pet.dto.PetRequest;
 import fiap.com.br.petguardian.pet.raca.Raca;
 import fiap.com.br.petguardian.pet.raca.RacaRepository;
@@ -8,11 +9,9 @@ import fiap.com.br.petguardian.usuario.UsuarioRepository;
 import fiap.com.br.petguardian.usuariopet.UsuarioPet;
 import fiap.com.br.petguardian.usuariopet.UsuarioPetRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +21,12 @@ public class PetService {
     private final UsuarioPetRepository usuarioPetRepository;
     private final RacaRepository racaRepository;
 
-    public List<Pet> findAll() {
-        return petRepository.findAll();
+    public Page<Pet> findAll(Pageable pageable) {
+        return petRepository.findAll(pageable);
+    }
+
+    public Page<Pet> findByNome(String nome, Pageable pageable) {
+        return petRepository.findByNomeContainingIgnoreCase(nome, pageable);
     }
 
     public Pet findById(Long id) {
@@ -68,14 +71,36 @@ public class PetService {
     }
 
     private Pet findPetById(Long id) {
-        return petRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pet com id " + id + " não encontrado."));
+        return petRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pet com id " + id + " não encontrado."));
     }
 
     private Usuario findUsuarioById(Long id) {
-        return usuarioRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario com id " + id + " nao encontrado."));
+        return usuarioRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuario com id " + id + " nao encontrado."));
     }
 
     private Raca findOrCreateRaca(String nomeRaca) {
         return racaRepository.findByNome(nomeRaca).orElseGet(() -> racaRepository.save(Raca.builder().nome(nomeRaca).build()));
+    }
+
+    public void vincularUsuario(Long petId, Long usuarioId, boolean principal) {
+        Pet pet = findPetById(petId);
+        Usuario usuario = findUsuarioById(usuarioId);
+
+        if (principal) {
+            usuarioPetRepository.limparResponsavelPrincipalPorPet(petId);
+        }
+
+        UsuarioPet usuarioPet = usuarioPetRepository.findByUsuarioIdAndPetId(usuarioId, petId)
+            .orElseGet(() -> UsuarioPet.of(usuario, pet, false));
+
+        usuarioPet.setResponsavelPrincipal(principal);
+        usuarioPetRepository.save(usuarioPet);
+    }
+
+    public void desvincularUsuario(Long petId, Long usuarioId) {
+        UsuarioPet usuarioPet = usuarioPetRepository.findByUsuarioIdAndPetId(usuarioId, petId)
+            .orElseThrow(() -> new ResourceNotFoundException("Vínculo não encontrado entre o usuário e o pet informados."));
+
+        usuarioPetRepository.delete(usuarioPet);
     }
 }

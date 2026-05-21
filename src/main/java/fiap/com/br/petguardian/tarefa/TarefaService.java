@@ -1,5 +1,6 @@
 package fiap.com.br.petguardian.tarefa;
 
+import fiap.com.br.petguardian.exception.ResourceNotFoundException;
 import fiap.com.br.petguardian.status.Status;
 import fiap.com.br.petguardian.status.StatusService;
 
@@ -14,10 +15,8 @@ import fiap.com.br.petguardian.usuario.Usuario;
 import fiap.com.br.petguardian.usuario.UsuarioRepository;
 import fiap.com.br.petguardian.usuariopet.UsuarioPetRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,7 +45,7 @@ public class TarefaService {
 
     public Tarefa findByFamiliaIdAndTarefaId(Long familiaId, Long tarefaId) {
         expirarTarefasPendentesAtrasadas();
-        return tarefaRepository.findByIdAndFamiliaId(tarefaId, familiaId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tarefa com id " + tarefaId + " não encontrada para a familia informada."));
+        return tarefaRepository.findByIdAndFamiliaId(tarefaId, familiaId).orElseThrow(() -> new ResourceNotFoundException("Tarefa com id " + tarefaId + " não encontrada para a familia informada."));
     }
 
     public Tarefa create(TarefaRequest tarefaRequest) {
@@ -80,12 +79,12 @@ public class TarefaService {
 
         String statusStr = tarefaRequest.status();
 
-        if ("EXPIRADO".equalsIgnoreCase(statusStr) && tarefaRequest.prazo().isAfter(LocalDateTime.now())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é permitido marcar como EXPIRADO antes do vencimento do prazo.");
+        if ("EXPIRADO".equalsIgnoreCase(statusStr) && tarefaRequest.prazo().isAfter(LocalDateTime.now())) throw new IllegalArgumentException("Não é permitido marcar como EXPIRADO antes do vencimento do prazo.");
 
         tarefa.setStatus(statusService.findStatusByNome(statusStr));
 
         if ("CONCLUIDO".equalsIgnoreCase(statusStr)) {
-            if (tarefaRequest.concluinteId() == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Para marcar a tarefa como CONCLUIDO, é necessário informar o concluinteId.");
+            if (tarefaRequest.concluinteId() == null) throw new IllegalArgumentException("Para marcar a tarefa como CONCLUIDO, é necessário informar o concluinteId.");
             Usuario concluinte = findUsuarioById(tarefaRequest.concluinteId());
             validarUsuarioNaFamilia(concluinte, familia);
             tarefa.setConcluinte(concluinte);
@@ -105,7 +104,7 @@ public class TarefaService {
         expirarTarefasPendentesAtrasadas();
         Tarefa tarefa = findTarefaById(id);
         if (!"PENDENTE".equals(tarefa.getStatus().getNome_status().name()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Apenas tarefas pendentes podem ser concluidas.");
+            throw new IllegalArgumentException("Apenas tarefas pendentes podem ser concluidas.");
 
         Usuario concluinte = findUsuarioById(tarefaConclusaoRequest.concluinteId());
         validarUsuarioNaFamilia(concluinte, tarefa.getCriador().getFamilia());
@@ -124,31 +123,31 @@ public class TarefaService {
     }
 
     private void validarUsuarioNaFamilia(Usuario usuario, Familia familia) {
-        if (!familia.getId().equals(usuario.getFamilia().getId())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário concluinte com id " + usuario.getId() + " não pertence à família informada.");
+        if (!familia.getId().equals(usuario.getFamilia().getId())) throw new IllegalArgumentException("Usuário concluinte com id " + usuario.getId() + " não pertence à família informada.");
     }
 
     private void validarPetNaFamilia(Familia familia, Pet pet) {
-        if (!usuarioPetRepository.existsPetNaFamilia(pet.getId(), familia.getId())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pet com id " + pet.getId() + " não pertence a família informada.");
+        if (!usuarioPetRepository.existsPetNaFamilia(pet.getId(), familia.getId())) throw new IllegalArgumentException("Pet com id " + pet.getId() + " não pertence a família informada.");
     }
 
     private void validarFamiliaImutavel(Tarefa tarefaAtual, Long familiaIdInformada) {
-        if (!tarefaAtual.getCriador().getFamilia().getId().equals(familiaIdInformada)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é permitido trocar a família de uma tarefa existente.");
+        if (!tarefaAtual.getCriador().getFamilia().getId().equals(familiaIdInformada)) throw new IllegalArgumentException("Não é permitido trocar a família de uma tarefa existente.");
     }
 
     private Tarefa findTarefaById(Long id) {
-        return tarefaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tarefa com id " + id + " não encontrada."));
+        return tarefaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tarefa com id " + id + " não encontrada."));
     }
 
     private Pet findPetById(Long id) {
-        return petRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pet com id " + id + " não encontrado."));
+        return petRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pet com id " + id + " não encontrado."));
     }
 
     private Usuario findUsuarioById(Long id) {
-        return usuarioRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário com id " + id + " não encontrado."));
+        return usuarioRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + id + " não encontrado."));
     }
 
     private Familia findFamiliaById(Long id) {
-        return familiaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Família com id " + id + " não encontrada."));
+        return familiaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Família com id " + id + " não encontrada."));
     }
 
     private void expirarTarefasPendentesAtrasadas() {

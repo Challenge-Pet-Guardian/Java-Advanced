@@ -1,14 +1,13 @@
 package fiap.com.br.petguardian.veterinaria;
 
+import fiap.com.br.petguardian.exception.ResourceNotFoundException;
 import fiap.com.br.petguardian.endereco.Endereco;
 import fiap.com.br.petguardian.endereco.EnderecoService;
 import fiap.com.br.petguardian.telefone.Telefone;
 import fiap.com.br.petguardian.telefone.TelefoneRepository;
 import fiap.com.br.petguardian.veterinaria.dto.VeterinariaRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -52,8 +51,6 @@ public class VeterinariaService {
     }
 
     private Veterinaria findVeterinariaById(Long id) {
-        return veterinariaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Veterinaria com id " + id + " nao encontrada."));
+        return veterinariaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Veterinaria com id " + id + " nao encontrada."));
     }
 }

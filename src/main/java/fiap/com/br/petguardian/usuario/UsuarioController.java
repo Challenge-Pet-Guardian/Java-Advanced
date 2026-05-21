@@ -5,11 +5,13 @@ import fiap.com.br.petguardian.usuario.dto.UsuarioResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -20,11 +22,18 @@ public class UsuarioController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UsuarioResponse> findAll() {
-        return usuarioService.findAll()
-                .stream()
-                .map(UsuarioResponse::fromEntity)
-                .toList();
+    @Operation(summary = "Listar todos os usuários com paginação, ordenação e filtro por nome")
+    public Page<UsuarioResponse> findAll(
+            @RequestParam(required = false) String nome,
+            @PageableDefault(size = 10, page = 0, sort = "nome", direction = Sort.Direction.ASC) Pageable pageable) {
+        
+        if (nome != null && !nome.isBlank()) {
+            return usuarioService.findByNome(nome, pageable)
+                    .map(UsuarioResponse::fromEntity);
+        }
+        
+        return usuarioService.findAll(pageable)
+                .map(UsuarioResponse::fromEntity);
     }
 
     @GetMapping("{id}")

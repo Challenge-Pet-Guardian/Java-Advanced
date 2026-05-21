@@ -6,10 +6,12 @@ import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.telefone.Telefone;
 import fiap.com.br.petguardian.usuario.Usuario;
 
+import fiap.com.br.petguardian.validation.DddValidation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record UsuarioRequest(
@@ -25,11 +27,11 @@ public record UsuarioRequest(
         String senha,
 
         @NotBlank
-        @Size(max = 2)
+        @DddValidation
         String ddd,
 
         @NotBlank
-        @Size(max = 9)
+        @Pattern(regexp = "\\d{9}", message = "Número de telefone deve conter exatamente 9 dígitos numéricos.")
         String numeroTelefone,
 
         @NotNull

@@ -9,6 +9,7 @@ import fiap.com.br.petguardian.validation.EnumValidation;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +18,8 @@ public record TarefaRequest(
         @NotBlank
         String titulo,
 
-        @NotBlank
+        @NotNull
+        @Positive(message = "Pontos da tarefa devem ser maiores que zero.")
         Integer pontosTarefa,
 
         @NotBlank

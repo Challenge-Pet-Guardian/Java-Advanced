@@ -1,5 +1,6 @@
 package fiap.com.br.petguardian.usuario;
 
+import fiap.com.br.petguardian.exception.ResourceNotFoundException;
 import fiap.com.br.petguardian.endereco.Endereco;
 import fiap.com.br.petguardian.endereco.EnderecoService;
 import fiap.com.br.petguardian.familia.Familia;
@@ -8,11 +9,10 @@ import fiap.com.br.petguardian.telefone.Telefone;
 import fiap.com.br.petguardian.telefone.TelefoneRepository;
 import fiap.com.br.petguardian.usuario.dto.UsuarioRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +22,12 @@ public class UsuarioService {
     private final EnderecoService enderecoService;
     private final TelefoneRepository telefoneRepository;
 
-    public List<Usuario> findAll() {
-        return usuarioRepository.findAll();
+    public Page<Usuario> findAll(Pageable pageable) {
+        return usuarioRepository.findAll(pageable);
+    }
+
+    public Page<Usuario> findByNome(String nome, Pageable pageable) {
+        return usuarioRepository.findByNomeContainingIgnoreCase(nome, pageable);
     }
 
     public Usuario findById(Long id) {
@@ -53,10 +57,10 @@ public class UsuarioService {
     }
 
     private Usuario findUsuarioById(Long id) {
-        return usuarioRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário com id " + id + " não encontrado." ));
+        return usuarioRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário com id " + id + " não encontrado." ));
     }
 
     private Familia findFamiliaById(Long id) {
-        return familiaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Família com id " + id + " não encontrada."));
+        return familiaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Família com id " + id + " não encontrada."));
     }
 }
