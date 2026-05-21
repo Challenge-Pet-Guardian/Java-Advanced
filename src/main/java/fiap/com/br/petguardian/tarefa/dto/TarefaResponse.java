@@ -12,10 +12,9 @@ public record TarefaResponse(
         LocalDateTime criacao,
         LocalDateTime prazo,
         String status,
-        Long familiaId,
-        Long criadorId,
-        Long concluinteId,
-        Long petId
+        Long usuarioId,
+        Long petId,
+        Long veterinarioId
 ) {
     public static TarefaResponse fromEntity(Tarefa tarefa) {
         return new TarefaResponse(
@@ -26,10 +25,9 @@ public record TarefaResponse(
                 tarefa.getCriacao(),
                 tarefa.getPrazo(),
                 tarefa.getStatus().getNome_status().name(),
-                tarefa.getCriador().getFamilia().getId(),
-                tarefa.getCriador().getId(),
-                tarefa.getConcluinte() == null ? null : tarefa.getConcluinte().getId(),
-                tarefa.getPet().getId()
+                tarefa.getUsuario() == null ? null : tarefa.getUsuario().getId(),
+                tarefa.getPet().getId(),
+                tarefa.getVeterinario().getId()
         );
     }
 }

@@ -3,7 +3,7 @@ package fiap.com.br.petguardian.atendimento;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.status.Status;
-import fiap.com.br.petguardian.veterinaria.Veterinaria;
+import fiap.com.br.petguardian.veterinario.Veterinario;
 import fiap.com.br.petguardian.atendimento.tipoatendimento.TipoAtendimento;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -48,8 +48,7 @@ public class Atendimento {
     private Pet pet;
 
     @ManyToOne
-    @JoinColumn(name = "veterinaria_id_veterinaria", nullable = false)
+    @JoinColumn(name = "veterinario_id_veterinario", nullable = false)
     @JsonIgnore
-    private Veterinaria veterinaria;
-
+    private Veterinario veterinario;
 }

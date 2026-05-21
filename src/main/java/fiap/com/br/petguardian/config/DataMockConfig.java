@@ -10,8 +10,10 @@ import fiap.com.br.petguardian.endereco.cidade.Cidade;
 import fiap.com.br.petguardian.endereco.cidade.CidadeRepository;
 import fiap.com.br.petguardian.endereco.estado.Estado;
 import fiap.com.br.petguardian.endereco.estado.EstadoRepository;
-import fiap.com.br.petguardian.familia.Familia;
-import fiap.com.br.petguardian.familia.FamiliaRepository;
+import fiap.com.br.petguardian.clinica.Clinica;
+import fiap.com.br.petguardian.clinica.ClinicaRepository;
+import fiap.com.br.petguardian.veterinario.Veterinario;
+import fiap.com.br.petguardian.veterinario.VeterinarioRepository;
 import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.pet.PetPorte;
 import fiap.com.br.petguardian.pet.PetRepository;
@@ -31,14 +33,13 @@ import fiap.com.br.petguardian.usuario.Usuario;
 import fiap.com.br.petguardian.usuario.UsuarioRepository;
 import fiap.com.br.petguardian.usuariopet.UsuarioPet;
 import fiap.com.br.petguardian.usuariopet.UsuarioPetRepository;
-import fiap.com.br.petguardian.veterinaria.Veterinaria;
-import fiap.com.br.petguardian.veterinaria.VeterinariaRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 
 @Configuration
 public class DataMockConfig {
@@ -49,11 +50,11 @@ public class DataMockConfig {
             BairroRepository bairroRepository,
             CidadeRepository cidadeRepository,
             EstadoRepository estadoRepository,
-            FamiliaRepository familiaRepository,
             UsuarioRepository usuarioRepository,
             PetRepository petRepository,
             UsuarioPetRepository usuarioPetRepository,
-            VeterinariaRepository veterinariaRepository,
+            ClinicaRepository clinicaRepository,
+            VeterinarioRepository veterinarioRepository,
             TarefaRepository tarefaRepository,
             AtendimentoRepository atendimentoRepository,
             StatusRepository statusRepository,
@@ -62,7 +63,7 @@ public class DataMockConfig {
             TelefoneRepository telefoneRepository
     ) {
         return args -> {
-            if (familiaRepository.count() > 0) {
+            if (usuarioRepository.count() > 0) {
                 return;
             }
 
@@ -92,28 +93,29 @@ public class DataMockConfig {
             );
 
             // 2. Telefones
-            Telefone telCarlos = telefoneRepository.save(
-                    Telefone.builder().ddd("11").numero("911112222").build()
-            );
+            Telefone telCarlos = Telefone.builder().ddd("11").numero("911112222").build();
+            Telefone telAna = Telefone.builder().ddd("11").numero("933334444").build();
+            Telefone telMariana = Telefone.builder().ddd("11").numero("955556666").build();
+            Telefone telVetClinic = Telefone.builder().ddd("11").numero("988888888").build();
+            Telefone telVetDoctor = Telefone.builder().ddd("11").numero("977777777").build();
 
-            Telefone telAna = telefoneRepository.save(
-                    Telefone.builder().ddd("11").numero("933334444").build()
-            );
-
-            Telefone telMariana = telefoneRepository.save(
-                    Telefone.builder().ddd("11").numero("955556666").build()
-            );
-
-            Telefone telVet = telefoneRepository.save(
-                    Telefone.builder().ddd("11").numero("988888888").build()
-            );
-
-            // 3. Veterinária
-            Veterinaria vet = veterinariaRepository.save(
-                    Veterinaria.builder()
+            // 3. Clínica
+            Clinica clinica = clinicaRepository.save(
+                    Clinica.builder()
                             .nome("Clínica Pet Feliz")
-                            .telefone(telVet)
+                            .telefone(telVetClinic)
                             .endereco(enderecoVet)
+                            .build()
+            );
+
+            // 3.5 Veterinário
+            Veterinario vet = veterinarioRepository.save(
+                    Veterinario.builder()
+                            .nome("Dr. Ricardo Santos")
+                            .email("ricardo.santos@petfeliz.com")
+                            .senha("123456")
+                            .telefone(telVetDoctor)
+                            .clinica(clinica)
                             .build()
             );
 
@@ -141,19 +143,14 @@ public class DataMockConfig {
             TipoAtendimento tipoCirurgia = tipoAtendimentoRepository.findByTipoAtendimento(EnumTipoAtendimento.CIRURGIA)
                     .orElseGet(() -> tipoAtendimentoRepository.save(TipoAtendimento.builder().tipoAtendimento(EnumTipoAtendimento.CIRURGIA).build()));
 
-            // 6. Família Silva
-            Familia familiaSilva = familiaRepository.save(
-                    Familia.builder().nome("Família Silva").usuarios(new HashSet<>()).build()
-            );
-
+            // 6. Usuários
             Usuario carlos = usuarioRepository.save(
                     Usuario.builder()
                             .nome("Carlos Silva")
                             .email("carlos.silva@petguardian.com")
                             .senha("123456")
                             .telefone(telCarlos)
-                            .endereco(enderecoCarlos)
-                            .familia(familiaSilva)
+                            .enderecos(new HashSet<>(List.of(enderecoCarlos)))
                             .build()
             );
 
@@ -163,8 +160,17 @@ public class DataMockConfig {
                             .email("ana.silva@petguardian.com")
                             .senha("123456")
                             .telefone(telAna)
-                            .endereco(enderecoCarlos)
-                            .familia(familiaSilva)
+                            .enderecos(new HashSet<>(List.of(enderecoCarlos)))
+                            .build()
+            );
+
+            Usuario mariana = usuarioRepository.save(
+                    Usuario.builder()
+                            .nome("Mariana Santos")
+                            .email("mariana.santos@petguardian.com")
+                            .senha("123456")
+                            .telefone(telMariana)
+                            .enderecos(new HashSet<>(List.of(enderecoMariana)))
                             .build()
             );
 
@@ -190,21 +196,33 @@ public class DataMockConfig {
                             .build()
             );
 
+            Pet rex = petRepository.save(
+                    Pet.builder()
+                            .nome("Rex")
+                            .idade(5)
+                            .raca(racaViraLata)
+                            .porte(PetPorte.MEDIO)
+                            .sexo('M')
+                            .castrado(Boolean.TRUE)
+                            .build()
+            );
+
             usuarioPetRepository.save(UsuarioPet.principal(carlos, thor));
             usuarioPetRepository.save(UsuarioPet.of(ana, thor, false));
             usuarioPetRepository.save(UsuarioPet.principal(ana, mel));
+            usuarioPetRepository.save(UsuarioPet.principal(mariana, rex));
 
-            // Tarefas da Família Silva
+            // Tarefas (prescritas pelo vet — pendentes sem executor, concluidas com executor)
             tarefaRepository.save(
                     Tarefa.builder()
                             .titulo("Alimentar o Thor")
-                            .descricao("Dar 300g de ração seca e trocar água.")
+                            .descricao("Dar 300g de racao seca e trocar agua.")
                             .pontosTarefa(10)
                             .criacao(LocalDateTime.now())
                             .prazo(LocalDateTime.now().plusHours(2))
                             .status(statusPendente)
-                            .criador(carlos)
                             .pet(thor)
+                            .veterinario(vet)
                             .build()
             );
 
@@ -217,9 +235,9 @@ public class DataMockConfig {
                             .prazo(LocalDateTime.now().plusDays(1))
                             .conclusao(LocalDateTime.now())
                             .status(statusConcluido)
-                            .criador(carlos)
-                            .concluinte(carlos)
+                            .usuario(carlos)
                             .pet(thor)
+                            .veterinario(vet)
                             .build()
             );
 
@@ -231,12 +249,25 @@ public class DataMockConfig {
                             .criacao(LocalDateTime.now().minusDays(3))
                             .prazo(LocalDateTime.now().minusDays(1))
                             .status(statusExpirado)
-                            .criador(ana)
                             .pet(mel)
+                            .veterinario(vet)
                             .build()
             );
 
-            // Atendimentos da Família Silva
+            tarefaRepository.save(
+                    Tarefa.builder()
+                            .titulo("Passear com o Rex")
+                            .descricao("Passeio de 30 minutos no parque.")
+                            .pontosTarefa(20)
+                            .criacao(LocalDateTime.now())
+                            .prazo(LocalDateTime.now().plusHours(3))
+                            .status(statusPendente)
+                            .pet(rex)
+                            .veterinario(vet)
+                            .build()
+            );
+
+            // Atendimentos
             atendimentoRepository.save(
                     Atendimento.builder()
                             .tipo(tipoVacinacao)
@@ -245,7 +276,7 @@ public class DataMockConfig {
                             .valor(150.0)
                             .status(statusPendente)
                             .pet(thor)
-                            .veterinaria(vet)
+                            .veterinario(vet)
                             .build()
             );
 
@@ -257,49 +288,7 @@ public class DataMockConfig {
                             .valor(120.0)
                             .status(statusConcluido)
                             .pet(mel)
-                            .veterinaria(vet)
-                            .build()
-            );
-
-            // 7. Família Santos
-            Familia familiaSantos = familiaRepository.save(
-                    Familia.builder().nome("Família Santos").usuarios(new HashSet<>()).build()
-            );
-
-            Usuario mariana = usuarioRepository.save(
-                    Usuario.builder()
-                            .nome("Mariana Santos")
-                            .email("mariana.santos@petguardian.com")
-                            .senha("123456")
-                            .telefone(telMariana)
-                            .endereco(enderecoMariana)
-                            .familia(familiaSantos)
-                            .build()
-            );
-
-            Pet rex = petRepository.save(
-                    Pet.builder()
-                            .nome("Rex")
-                            .idade(5)
-                            .raca(racaViraLata)
-                            .porte(PetPorte.MEDIO)
-                            .sexo('M')
-                            .castrado(Boolean.TRUE)
-                            .build()
-            );
-
-            usuarioPetRepository.save(UsuarioPet.principal(mariana, rex));
-
-            tarefaRepository.save(
-                    Tarefa.builder()
-                            .titulo("Passear com o Rex")
-                            .descricao("Passeio de 30 minutos no parque.")
-                            .pontosTarefa(20)
-                            .criacao(LocalDateTime.now())
-                            .prazo(LocalDateTime.now().plusHours(3))
-                            .status(statusPendente)
-                            .criador(mariana)
-                            .pet(rex)
+                            .veterinario(vet)
                             .build()
             );
 
@@ -311,7 +300,7 @@ public class DataMockConfig {
                             .valor(800.0)
                             .status(statusConcluido)
                             .pet(rex)
-                            .veterinaria(vet)
+                            .veterinario(vet)
                             .build()
             );
         };

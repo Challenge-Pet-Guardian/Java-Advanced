@@ -2,7 +2,6 @@ package fiap.com.br.petguardian.usuario;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fiap.com.br.petguardian.endereco.Endereco;
-import fiap.com.br.petguardian.familia.Familia;
 import fiap.com.br.petguardian.tarefa.Tarefa;
 import fiap.com.br.petguardian.telefone.Telefone;
 import fiap.com.br.petguardian.usuariopet.UsuarioPet;
@@ -38,38 +37,29 @@ public class Usuario {
     @Column(nullable = false, length = 20)
     private String senha;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "telefone_id_telefone", nullable = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Telefone telefone;
 
-    @ManyToOne
-    @JoinColumn(name = "endereco_id_endereco", nullable = false)
+    @ManyToMany
+    @JoinTable(
+        name = "usuario_endereco",
+        joinColumns = @JoinColumn(name = "usuario_id_usuario"),
+        inverseJoinColumns = @JoinColumn(name = "endereco_id_endereco")
+    )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Endereco endereco;
+    @Builder.Default
+    private Set<Endereco> enderecos = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "familia_id_familia", nullable = false)
-    @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Familia familia;
-
-    @OneToMany(mappedBy = "criador")
+    @OneToMany(mappedBy = "usuario")
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @Builder.Default
-    private Set<Tarefa> tarefasCriadas = new HashSet<>();
-
-    @OneToMany(mappedBy = "concluinte")
-    @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @Builder.Default
-    private Set<Tarefa> tarefasExecutadas = new HashSet<>();
+    private Set<Tarefa> tarefas = new HashSet<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

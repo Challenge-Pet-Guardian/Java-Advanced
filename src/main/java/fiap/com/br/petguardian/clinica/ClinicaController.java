@@ -1,0 +1,57 @@
+package fiap.com.br.petguardian.clinica;
+
+import fiap.com.br.petguardian.clinica.dto.ClinicaRequest;
+import fiap.com.br.petguardian.clinica.dto.ClinicaResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/clinicas")
+@RequiredArgsConstructor
+@Tag(name = "Clinicas", description = "Gerenciamento de clínicas veterinárias")
+public class ClinicaController {
+    private final ClinicaService clinicaService;
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<ClinicaResponse> findAll() {
+        return clinicaService.findAll()
+                .stream()
+                .map(ClinicaResponse::fromEntity)
+                .toList();
+    }
+
+    @GetMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Buscar clínica por ID")
+    public ClinicaResponse findById(@PathVariable Long id) {
+        return ClinicaResponse.fromEntity(clinicaService.findById(id));
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Criar clínica")
+    public ClinicaResponse create(@Valid @RequestBody ClinicaRequest clinicaRequest) {
+        return ClinicaResponse.fromEntity(clinicaService.create(clinicaRequest));
+    }
+
+    @PutMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Atualizar clínica")
+    public ClinicaResponse update(@PathVariable Long id, @Valid @RequestBody ClinicaRequest clinicaRequest) {
+        return ClinicaResponse.fromEntity(clinicaService.update(id, clinicaRequest));
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Deletar clínica")
+    public void delete(@PathVariable Long id) {
+        clinicaService.delete(id);
+    }
+}

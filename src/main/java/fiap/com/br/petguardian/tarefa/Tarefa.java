@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.status.Status;
 import fiap.com.br.petguardian.usuario.Usuario;
+import fiap.com.br.petguardian.veterinario.Veterinario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,18 +49,11 @@ public class Tarefa {
     private Status status;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id_criador", nullable = false)
+    @JoinColumn(name = "usuario_id_usuario")
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Usuario criador;
-
-    @ManyToOne
-    @JoinColumn(name = "usuario_id_concluinte")
-    @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Usuario concluinte;
+    private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "pet_id_pet", nullable = false)
@@ -67,4 +61,11 @@ public class Tarefa {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Pet pet;
+
+    @ManyToOne
+    @JoinColumn(name = "veterinario_id_veterinario", nullable = false)
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Veterinario veterinario;
 }

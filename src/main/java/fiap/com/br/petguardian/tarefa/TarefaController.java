@@ -15,15 +15,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/tarefas")
 @RequiredArgsConstructor
-@Tag(name = "Tarefas", description = "Gerenciamento de tarefas gamificadas da família")
+@Tag(name = "Tarefas", description = "Gerenciamento de tarefas gamificadas")
 public class TarefaController {
     private final TarefaService tarefaService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Listar todas as tarefas por familiaId")
-    public List<TarefaResponse> findAll(@RequestParam Long familiaId) {
-        return tarefaService.findAll(familiaId)
+    @Operation(summary = "Listar todas as tarefas por usuarioId")
+    public List<TarefaResponse> findAll(@RequestParam Long usuarioId) {
+        return tarefaService.findAll(usuarioId)
                 .stream()
                 .map(TarefaResponse::fromEntity)
                 .toList();
@@ -36,11 +36,11 @@ public class TarefaController {
         return TarefaResponse.fromEntity(tarefaService.findById(id));
     }
 
-    @GetMapping("/familias/{familiaId}/{id}")
+    @GetMapping("/usuarios/{usuarioId}/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Buscar tarefa por família e ID")
-    public TarefaResponse findByFamiliaIdAndTarefaId(@PathVariable Long familiaId, @PathVariable Long id) {
-        return TarefaResponse.fromEntity(tarefaService.findByFamiliaIdAndTarefaId(familiaId, id));
+    @Operation(summary = "Buscar tarefa por usuário e ID")
+    public TarefaResponse findByUsuarioIdAndTarefaId(@PathVariable Long usuarioId, @PathVariable Long id) {
+        return TarefaResponse.fromEntity(tarefaService.findByUsuarioIdAndTarefaId(usuarioId, id));
     }
 
     @PostMapping
@@ -62,6 +62,13 @@ public class TarefaController {
     @Operation(summary = "Concluir tarefa")
     public TarefaResponse concluir(@PathVariable Long id, @Valid @RequestBody TarefaConclusaoRequest tarefaConclusaoRequest) {
         return TarefaResponse.fromEntity(tarefaService.concluir(id, tarefaConclusaoRequest));
+    }
+
+    @GetMapping("/pontos")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Consultar pontos totais acumulados por um cuidador")
+    public Integer calcularPontosTotaisUsuario(@RequestParam Long usuarioId) {
+        return tarefaService.calcularPontosTotaisUsuario(usuarioId);
     }
 
     @DeleteMapping("{id}")

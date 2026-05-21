@@ -3,7 +3,7 @@ package fiap.com.br.petguardian.endereco;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fiap.com.br.petguardian.endereco.bairro.Bairro;
 import fiap.com.br.petguardian.usuario.Usuario;
-import fiap.com.br.petguardian.veterinaria.Veterinaria;
+import fiap.com.br.petguardian.clinica.Clinica;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,7 +42,7 @@ public class Endereco {
     @ToString.Exclude
     private Bairro bairro;
 
-    @OneToMany(mappedBy = "endereco")
+    @ManyToMany(mappedBy = "enderecos")
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
@@ -54,5 +54,5 @@ public class Endereco {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @Builder.Default
-    private Set<Veterinaria> veterinarias = new HashSet<>();
+    private Set<Clinica> clinicas = new HashSet<>();
 }

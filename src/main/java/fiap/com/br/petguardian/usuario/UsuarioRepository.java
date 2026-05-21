@@ -2,18 +2,11 @@ package fiap.com.br.petguardian.usuario;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    List<Usuario> findAllByFamiliaId(Long familiaId);
-
-    @Query("select u.id from Usuario u where u.familia.id = :familiaId")
-    Set<Long> findIdsByFamiliaId(@Param("familiaId") Long familiaId);
-
     Page<Usuario> findByNomeContainingIgnoreCase(String nome, Pageable pageable);
+    Optional<Usuario> findByEmailIgnoreCase(String email);
 }

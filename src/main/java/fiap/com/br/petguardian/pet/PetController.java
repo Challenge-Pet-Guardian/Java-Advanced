@@ -1,5 +1,6 @@
 package fiap.com.br.petguardian.pet;
 
+import fiap.com.br.petguardian.pet.dto.PetHistoryResponse;
 import fiap.com.br.petguardian.pet.dto.PetRequest;
 import fiap.com.br.petguardian.pet.dto.PetResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +17,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/pets")
 @RequiredArgsConstructor
-@Tag(name = "Pets", description = "Gerenciamento de pets da família")
+@Tag(name = "Pets", description = "Gerenciamento de pets e rede de co-cuidadores")
 public class PetController {
     private final PetService petService;
 
@@ -41,6 +42,13 @@ public class PetController {
     @Operation(summary = "Buscar pet por ID")
     public PetResponse findById(@PathVariable Long id) {
         return PetResponse.fromEntity(petService.findById(id));
+    }
+
+    @GetMapping("{id}/historico")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Obter historico clinico consolidado do pet (atendimentos e tarefas concluidas)")
+    public PetHistoryResponse getHistorico(@PathVariable Long id) {
+        return petService.getConsolidatedHistory(id);
     }
 
     @PostMapping
@@ -76,5 +84,25 @@ public class PetController {
     @Operation(summary = "Desvincular um usuário de um pet")
     public void desvincularUsuario(@PathVariable Long id, @PathVariable Long usuarioId) {
         petService.desvincularUsuario(id, usuarioId);
+    }
+
+    @PostMapping("{id}/convidar")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Convidar co-cuidador por ID (somente responsavel principal)")
+    public void convidarCuidadorPorId(
+            @PathVariable Long id,
+            @RequestParam Long responsavelPrincipalId,
+            @RequestParam Long usuarioConvidadoId) {
+        petService.vincularCuidadorPorResponsavelPrincipal(id, responsavelPrincipalId, usuarioConvidadoId);
+    }
+
+    @PostMapping("{id}/convidar-email")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Convidar co-cuidador por e-mail (somente responsavel principal)")
+    public void convidarCuidadorPorEmail(
+            @PathVariable Long id,
+            @RequestParam Long responsavelPrincipalId,
+            @RequestParam String email) {
+        petService.vincularCuidadorPorEmail(id, responsavelPrincipalId, email);
     }
 }

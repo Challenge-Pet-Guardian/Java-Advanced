@@ -1,5 +1,6 @@
 package fiap.com.br.petguardian.usuario;
 
+import fiap.com.br.petguardian.usuario.dto.RedeCuidadoResponse;
 import fiap.com.br.petguardian.usuario.dto.UsuarioRequest;
 import fiap.com.br.petguardian.usuario.dto.UsuarioResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,6 +42,13 @@ public class UsuarioController {
     @Operation(summary = "Buscar usuário por ID")
     public UsuarioResponse findById(@PathVariable Long id) {
         return UsuarioResponse.fromEntity(usuarioService.findById(id));
+    }
+
+    @GetMapping("{id}/rede-cuidado")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Visualizar rede de cuidado do usuário (pets, co-cuidadores, tarefas e atendimentos agrupados)")
+    public RedeCuidadoResponse getRedeCuidado(@PathVariable Long id) {
+        return usuarioService.getRedeCuidado(id);
     }
 
     @PostMapping

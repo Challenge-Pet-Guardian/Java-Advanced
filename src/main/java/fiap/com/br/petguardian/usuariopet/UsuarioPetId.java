@@ -13,9 +13,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Embeddable
 public class UsuarioPetId implements Serializable {
-    @Column(name = "id_usuario")
+    @Column(name = "usuario_id_usuario")
     private Long usuarioId;
 
-    @Column(name = "id_pet")
+    @Column(name = "pet_id_pet")
     private Long petId;
 }

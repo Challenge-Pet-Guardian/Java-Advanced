@@ -1,334 +1,277 @@
-# 🐾 PetGuardian API
+# PetGuardian API
 
-> **Challenge FIAP — Java Advanced (Spring Boot)**
+> **Challenge FIAP - Java Advanced (Spring Boot)**
 >
-> Plataforma colaborativa de gerenciamento de cuidados de pets com mecânica de gamificação baseada em Day Streak.
+> Plataforma colaborativa para gestao de cuidados de pets, com tarefas prescritas por veterinarios e execucao por cuidadores.
 
 ---
 
-## 📖 Sobre o Projeto
+## Sobre o Projeto
 
-O **PetGuardian** é uma API REST desenvolvida com **Spring Boot** que resolve o problema da falta de organização nos cuidados diários de animais domésticos em lares com múltiplos responsáveis.
+O **PetGuardian** e uma API REST em Spring Boot para organizar o cuidado diario de pets em cenarios com varios cuidadores.
 
-A plataforma é um **sistema colaborativo de gerenciamento de cuidados de pets com gamificação baseada em Day Streak**, semelhante ao **Duolingo**, permitindo que **usuários de uma mesma família** cuidem de seus pets em conjunto.
+A plataforma e centrada no **Pet**:
+- um pet pode ter varios cuidadores (`usuario_pet`);
+- existe um responsavel principal por pet (`respon_princ`);
+- veterinarios criam tarefas de cuidado;
+- cuidadores concluem tarefas e acumulam pontos;
+- atendimentos e tarefas concluidas formam o historico consolidado do pet.
 
-### 🎮 Gamificação: Day Streak + Pontuação + Ranking
+### Gamificacao: Pontos por Conclusao
 
-O sistema incentiva o engajamento nos cuidados do pet através de três mecânicas:
+O sistema incentiva engajamento por meio de pontos:
+- cada tarefa possui `pontos_tarefa`;
+- ao concluir, o cuidador executor recebe esses pontos;
+- os pontos sao calculados por soma das tarefas concluidas do usuario.
 
-- **Pontos por tarefa**: O criador da tarefa atribui uma pontuação a ela, encorajando os membros da família a concluí-la. Quem conclui a tarefa recebe os pontos
-- **Day Streak**: O sistema rastreia a sequência de dias consecutivos em que a família completou tarefas — quanto mais dias seguidos, maior o streak
-- **Ranking familiar**: Os pontos acumulados por cada membro permitem montar um ranking dentro da família, incentivando uma competição saudável entre os responsáveis
+### Rede de Cuidado (care circle)
 
-### 🏠 Modelo Familiar
+A antiga ideia de familia rigida foi substituida por uma rede dinamica por pet:
+- vinculos entre usuarios e pets em `usuario_pet`;
+- visao agregada por usuario em `/usuarios/{id}/rede-cuidado`;
+- co-cuidadores e pets compartilhados sao calculados a partir desses vinculos.
 
-- Cada **usuário** pertence a uma **família**
-- Os **pets** são associados à família através da relação `usuario_pet` (N:N)
-- Múltiplos usuários podem cuidar do mesmo pet
-- Um **responsável principal** pode ser definido para cada pet
+### Tarefas
 
-### ✅ Tarefas
+As tarefas representam cuidados como alimentar, medicar, passear, curativo etc.
 
-As tarefas representam atividades como alimentar, dar banho, passear, administrar remédio ou levar ao veterinário. Qualquer membro da família pode **criar** uma tarefa e atribuir uma **pontuação** a ela. Qualquer outro membro também pode **concluí-la**, porém cada tarefa só pode ser concluída **uma única vez**. As tarefas possuem status (Pendente, Concluída, Expirada) controlados em tabela própria.
+Regras atuais:
+- tarefa e criada pelo fluxo de prescricao (sem executor inicial);
+- apenas usuario vinculado ao pet pode concluir;
+- status controlado por tabela (`PENDENTE`, `CONCLUIDO`, `EXPIRADO`).
 
-### 🏥 Atendimentos Veterinários
+### Atendimentos Veterinarios
 
-O sistema registra atendimentos como consultas, vacinas, cirurgias, banhos e outros procedimentos. Cada atendimento está vinculado a um pet, uma veterinária, um tipo de atendimento e um status.
+Cada atendimento esta vinculado a:
+- um pet,
+- um veterinario,
+- um tipo de atendimento,
+- um status.
+
+No modelo atual de codigo, **atendimento nao referencia clinica diretamente**.
 
 ---
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 ```
 src/main/java/fiap/com/br/petguardian/
-├── config/              # Configurações (Swagger, Cache)
+├── config/              # Configuracoes (Swagger, seed, cache)
 ├── exception/           # Tratamento centralizado de erros
-├── validation/          # Validações customizadas (CEP, DDD, Enum)
+├── validation/          # Validacoes customizadas (CEP, DDD, Enum)
 │
-├── familia/             # Entidade Família (CRUD + Cache)
-├── usuario/             # Entidade Usuário (CRUD + Paginação)
-├── usuariopet/          # Relação N:N entre Usuário e Pet
-├── pet/                 # Entidade Pet (CRUD + Paginação)
-│   └── raca/            # Entidade Raça do Pet
+├── usuario/             # Usuario (CRUD + paginação)
+├── usuariopet/          # Relacao N:N Usuario x Pet
+├── pet/                 # Pet (CRUD + paginacao + historico)
+│   └── raca/            # Raca do pet
 │
-├── tarefa/              # Entidade Tarefa (CRUD + Conclusão)
-├── status/              # Entidade Status (Pendente/Concluída/Expirada)
-├── sequencia/           # Entidade Sequência (Day Streak)
+├── tarefa/              # Tarefa gamificada (prescricao/conclusao/pontos)
+├── status/              # Status de dominio
+├── atendimento/         # Atendimento veterinario
+│   └── tipoatendimento/ # Tipo de atendimento
 │
-├── veterinaria/         # Entidade Veterinária (CRUD)
-├── atendimento/         # Entidade Atendimento (CRUD)
-│   └── tipoatendimento/ # Tipo de Atendimento (Consulta/Vacina/etc.)
+├── clinica/             # Clinica veterinaria
+├── veterinario/         # Veterinario
+├── endereco/            # Endereco
+│   ├── bairro/
+│   ├── cidade/
+│   └── estado/
 │
-├── endereco/            # Entidade Endereço (integração ViaCEP)
-│   ├── bairro/          # Entidade Bairro
-│   ├── cidade/          # Entidade Cidade
-│   └── estado/          # Entidade Estado
-│
-└── telefone/            # Entidade Telefone
+└── telefone/            # Telefone
 ```
 
-Cada pacote segue o padrão **Controller → Service → Repository**, com DTOs separados em subpacotes `dto/` contendo Records Java de `Request` e `Response`.
+Padrao adotado: **Controller -> Service -> Repository**, com DTOs (`Request`/`Response`) por modulo.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
-| Tecnologia | Versão | Finalidade |
+| Tecnologia | Versao | Finalidade |
 |---|---|---|
-| **Java** | 17 | Linguagem principal |
-| **Spring Boot** | 4.0.6 | Framework principal |
-| **Spring Data JPA** | - | Persistência e ORM |
-| **Spring Validation** | - | Bean Validation |
-| **Spring Cache** | - | Cache de requisições |
-| **Spring Actuator** | - | Monitoramento |
-| **SpringDoc OpenAPI** | 3.0.3 | Documentação Swagger |
-| **H2 Database** | - | Banco de dados em memória |
-| **Lombok** | - | Redução de boilerplate |
-| **Maven** | - | Gerenciamento de dependências |
+| Java | 17 | Linguagem principal |
+| Spring Boot | 4.0.6 | Framework principal |
+| Spring Data JPA | - | Persistencia e ORM |
+| Spring Validation | - | Bean Validation |
+| Spring Cache | - | Cache de consultas |
+| Spring Actuator | - | Observabilidade |
+| SpringDoc OpenAPI | 3.0.3 | Documentacao Swagger |
+| H2 Database | - | Banco em memoria |
+| Lombok | - | Reducao de boilerplate |
+| Maven | - | Build e dependencias |
 
 ---
 
----
+## Endpoints da API
 
-## 🔗 Endpoints da API
+Todos os endpoints usam DTOs, Bean Validation e documentacao Swagger.
 
-Todos os endpoints utilizam **DTOs** (Records Java) para Request/Response, possuem **Bean Validation** nos campos de entrada, e estão documentados via **Swagger** (`@Tag` + `@Operation`). Os endpoints de listagem de Pets e Usuários suportam **paginação**, **ordenação** (`?sort=nome,desc`) e **busca por parâmetros** (`?nome=...`).
+### Usuarios (`/usuarios`)
 
-### 👥 Usuários (`/usuarios`)
-
-| Método | Endpoint | Descrição |
+| Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/usuarios` | Listar todos (paginado, com filtro por `?nome=`) |
-| `GET` | `/usuarios/{id}` | Buscar por ID |
-| `POST` | `/usuarios` | Criar usuário |
-| `PUT` | `/usuarios/{id}` | Atualizar usuário |
-| `DELETE` | `/usuarios/{id}` | Deletar usuário |
+| `GET` | `/usuarios` | Listar usuarios (paginado, filtro `?nome=`) |
+| `GET` | `/usuarios/{id}` | Buscar usuario por ID |
+| `GET` | `/usuarios/{id}/rede-cuidado` | Visao agregada da rede de cuidado |
+| `POST` | `/usuarios` | Criar usuario |
+| `PUT` | `/usuarios/{id}` | Atualizar usuario |
+| `DELETE` | `/usuarios/{id}` | Deletar usuario |
 
-### 🏠 Famílias (`/familias`)
+### Pets (`/pets`)
 
-| Método | Endpoint | Descrição |
+| Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/familias` | Listar todas (com cache) |
-| `GET` | `/familias/{id}` | Buscar por ID (com cache) |
-| `POST` | `/familias` | Criar família |
-| `PUT` | `/familias/{id}` | Atualizar família |
-| `DELETE` | `/familias/{id}` | Deletar família |
-
-### 🐶 Pets (`/pets`)
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| `GET` | `/pets` | Listar todos (paginado, com filtro por `?nome=`) |
-| `GET` | `/pets/{id}` | Buscar por ID |
+| `GET` | `/pets` | Listar pets (paginado, filtro `?nome=`) |
+| `GET` | `/pets/{id}` | Buscar pet por ID |
+| `GET` | `/pets/{id}/historico` | Historico consolidado (atendimentos + tarefas concluidas) |
 | `POST` | `/pets` | Criar pet |
 | `PUT` | `/pets/{id}` | Atualizar pet |
 | `DELETE` | `/pets/{id}` | Deletar pet |
-| `POST` | `/pets/{id}/usuarios/{usuarioId}` | Vincular um usuário a um pet (N:N) |
-| `DELETE` | `/pets/{id}/usuarios/{usuarioId}` | Desvincular um usuário de um pet (N:N) |
+| `POST` | `/pets/{id}/usuarios/{usuarioId}` | Vincular usuario ao pet (`?principal=true/false`) |
+| `DELETE` | `/pets/{id}/usuarios/{usuarioId}` | Desvincular usuario do pet |
+| `POST` | `/pets/{id}/convidar` | Convidar co-cuidador por ID (`responsavelPrincipalId`, `usuarioConvidadoId`) |
+| `POST` | `/pets/{id}/convidar-email` | Convidar co-cuidador por e-mail (`responsavelPrincipalId`, `email`) |
 
-### ✅ Tarefas (`/tarefas`)
+### Tarefas (`/tarefas`)
 
-| Método | Endpoint | Descrição |
+| Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/tarefas?familiaId={id}` | Listar tarefas da família |
-| `GET` | `/tarefas/{id}` | Buscar por ID |
-| `GET` | `/tarefas/familias/{familiaId}/{id}` | Buscar por família e ID |
+| `GET` | `/tarefas?usuarioId={id}` | Tarefas pendentes do cuidador |
+| `GET` | `/tarefas/{id}` | Buscar tarefa por ID |
+| `GET` | `/tarefas/usuarios/{usuarioId}/{id}` | Buscar tarefa por usuario + ID |
 | `POST` | `/tarefas` | Criar tarefa |
 | `PUT` | `/tarefas/{id}` | Atualizar tarefa |
 | `PATCH` | `/tarefas/{id}/concluir` | Concluir tarefa |
+| `GET` | `/tarefas/pontos?usuarioId={id}` | Pontos totais do cuidador |
 | `DELETE` | `/tarefas/{id}` | Deletar tarefa |
 
-### 🏥 Atendimentos (`/atendimentos`)
+### Atendimentos (`/atendimentos`)
 
-| Método | Endpoint | Descrição |
+| Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/atendimentos?familiaId={id}` | Listar atendimentos da família |
-| `GET` | `/atendimentos/{id}` | Buscar por ID |
+| `GET` | `/atendimentos?usuarioId={id}` | Listar atendimentos visiveis ao cuidador |
+| `GET` | `/atendimentos/{id}` | Buscar atendimento por ID |
 | `POST` | `/atendimentos` | Criar atendimento |
 | `PUT` | `/atendimentos/{id}` | Atualizar atendimento |
 | `DELETE` | `/atendimentos/{id}` | Deletar atendimento |
 
-### 🏪 Veterinárias (`/veterinarias`)
+### Clinicas (`/clinicas`)
 
-| Método | Endpoint | Descrição |
+| Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/veterinarias` | Listar todas |
-| `GET` | `/veterinarias/{id}` | Buscar por ID |
-| `POST` | `/veterinarias` | Criar veterinária |
-| `PUT` | `/veterinarias/{id}` | Atualizar veterinária |
-| `DELETE` | `/veterinarias/{id}` | Deletar veterinária |
+| `GET` | `/clinicas` | Listar clinicas |
+| `GET` | `/clinicas/{id}` | Buscar clinica por ID |
+| `POST` | `/clinicas` | Criar clinica |
+| `PUT` | `/clinicas/{id}` | Atualizar clinica |
+| `DELETE` | `/clinicas/{id}` | Deletar clinica |
 
-### 📍 Endereços (`/enderecos`)
+### Veterinarios (`/veterinarios`)
 
-Endereços são resolvidos automaticamente via integração com a API do **ViaCEP**. Ao enviar apenas o CEP e o número, o sistema busca e normaliza o endereço completo (rua, bairro, cidade, estado).
-
-| Método | Endpoint | Descrição |
+| Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/enderecos` | Listar todos |
-| `GET` | `/enderecos/{id}` | Buscar por ID |
-| `POST` | `/enderecos` | Criar endereço (resolve via ViaCEP) |
-| `PUT` | `/enderecos/{id}` | Atualizar endereço |
-| `DELETE` | `/enderecos/{id}` | Deletar endereço |
+| `GET` | `/veterinarios` | Listar veterinarios |
+| `GET` | `/veterinarios/{id}` | Buscar veterinario por ID |
+| `POST` | `/veterinarios` | Criar veterinario |
+| `PUT` | `/veterinarios/{id}` | Atualizar veterinario |
+| `DELETE` | `/veterinarios/{id}` | Deletar veterinario |
 
-### 🔥 Sequências / Day Streak (`/sequencias`)
+### Enderecos (`/enderecos`)
 
-Controla o sistema de streak da família. O streak é atualizado automaticamente com base nas tarefas concluídas.
-
-| Método | Endpoint | Descrição |
+| Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/sequencias/familia/{familiaId}` | Consultar streak da família |
-| `PUT` | `/sequencias/familia/{familiaId}` | Atualizar streak da família |
+| `GET` | `/enderecos` | Listar enderecos |
+| `GET` | `/enderecos/{id}` | Buscar endereco por ID |
+| `POST` | `/enderecos` | Criar endereco |
+| `PUT` | `/enderecos/{id}` | Atualizar endereco |
+| `DELETE` | `/enderecos/{id}` | Deletar endereco |
 
 ---
 
-## ▶️ Como Executar
+## Como Executar
 
-### Pré-requisitos
+### Pre-requisitos
 
-- **Java 17** ou superior instalado
-- **Maven** (ou utilize o wrapper `mvnw` incluído)
+- Java 17+
+- Maven (ou Maven Wrapper)
 
 ### Passos
 
+Linux/Mac:
 ```bash
-# 1. Clone o repositório
-git clone https://github.com/SEU_USUARIO/Java-Advanced.git
-
-# 2. Acesse o diretório
-cd Java-Advanced
-
-# 3. Execute a aplicação
 ./mvnw spring-boot:run
+```
+
+Windows:
+```bat
+mvnw.cmd spring-boot:run
 ```
 
 ### Acessos
 
 | Recurso | URL |
 |---|---|
-| **API** | `http://localhost:8080` |
-| **Swagger UI** | `http://localhost:8080/swagger-ui.html` |
-| **H2 Console** | `http://localhost:8080/h2-console` |
-| **Actuator** | `http://localhost:8080/actuator` |
+| API | `http://localhost:8080` |
+| Swagger UI | `http://localhost:8080/swagger-ui/index.html` |
+| H2 Console | `http://localhost:8080/h2-console` |
+| Actuator | `http://localhost:8080/actuator` |
 
-> **Configurações do H2:** JDBC URL: `jdbc:h2:mem:petguardian` | User: `sa` | Password: *(vazio)*
+Configuracao H2:
+- JDBC URL: `jdbc:h2:mem:petguardian`
+- User: `sa`
+- Password: vazio
 
 ---
 
-## 📂 Estrutura de Pastas
+## Estrutura de Pastas
 
 ```
 Java-Advanced/
 ├── src/
-│   └── main/
-│       ├── java/fiap/com/br/petguardian/
-│       │   ├── PetGuardianApplication.java      # Classe principal (@EnableCaching)
-│       │   ├── config/                          # SwaggerConfig, DataMockConfig
-│       │   ├── exception/                       # GlobalExceptionHandler, ResourceNotFoundException
-│       │   ├── validation/                      # @CepValidation, @DddValidation, @EnumValidation
-│       │   │
-│       │   ├── familia/                         # Familia
-│       │   ├── usuario/                         # Usuario
-│       │   ├── usuariopet/                      # UsuarioPet - Relação N:N
-│       │   ├── pet/                             # Pet
-│       │   │   └── raca/                        # Raca
-│       │   ├── tarefa/                          # Tarefa
-│       │   ├── status/                          # Status
-│       │   ├── sequencia/                       # Sequencia
-│       │   ├── veterinaria/                     # Veterinaria
-│       │   ├── atendimento/                     # Atendimento
-│       │   │   └── tipoatendimento/             # TipoAtendimento
-│       │   ├── endereco/                        # Endereco
-│       │   │   ├── bairro/                      # Bairro
-│       │   │   ├── cidade/                      # Cidade
-│       │   │   └── estado/                      # Estado
-│       │   └── telefone/                        # Telefone
-│       │
-│       └── resources/
-│           └── application.properties           # Configurações (H2, Swagger, Cache, Erros)
-├── documentos/                                  # Diagramas, cronograma, exportações Postman
-├── pom.xml                                      # Dependências Maven
-├── mvnw / mvnw.cmd                              # Maven Wrapper
-└── README.md                                    # Este arquivo
+│   ├── main/
+│   │   ├── java/fiap/com/br/petguardian/
+│   │   └── resources/application.properties
+│   └── test/
+├── pom.xml
+├── mvnw
+├── mvnw.cmd
+├── AGENT.md
+└── README.md
 ```
+
+> `documentos/` deve concentrar os artefatos de entrega (diagramas, cronograma e export de testes).
 
 ---
 
-## 🔒 Tratamento de Erros
+## Tratamento de Erros
 
-A API nunca expõe stack traces ou informações internas do servidor. Todas as respostas de erro seguem o formato padronizado:
+A API usa handler global e respostas padronizadas.
 
+Formato:
 ```json
 {
   "timestamp": "2026-05-20T22:00:00Z",
   "status": 400,
   "error": "Bad Request",
-  "message": "Mensagem amigável para o usuário",
+  "message": "Mensagem de erro",
   "path": "/endpoint"
 }
 ```
 
-### Erros tratados:
-
-| Tipo | Status | Descrição |
-|---|---|---|
-| Validação de campos | `400` | Campos inválidos no body da requisição |
-| Regra de negócio | `400` | Violação de regras do domínio |
-| JSON malformado | `400` | Tipos de dados incorretos no payload |
-| Integridade de dados | `400` | Violação de constraints do banco |
-| Recurso não encontrado | `404` | Entidade não existe no banco |
-| Erro interno | `500` | Fallback seguro sem exposição de detalhes |
+Tipos tratados:
+- validacao de campos (`400`)
+- regra de negocio (`400`)
+- JSON invalido (`400`)
+- integridade de dados (`400`)
+- recurso nao encontrado (`404`)
+- erro inesperado (`500`)
 
 ---
 
 ## Integrantes
 
-<table>
-<tr>
-<th>Nome</th>
-<th>RM</th>
-<th>Turma</th>
-<th>GitHub</th>
-<th>LinkedIn</th>
-</tr>
-
-<tr>
-<td>Enzo Okuizumi</td>
-<td>561432</td>
-<td>2TDSPG</td>
-<td><a href="https://github.com/EnzoOkuizumiFiap">EnzoOkuizumiFiap</a></td>
-<td><a href="https://www.linkedin.com/in/enzo-okuizumi-b60292256/">Enzo Okuizumi</a></td>
-</tr>
-
-<tr>
-<td>Lucas Barros Gouveia</td>
-<td>566422</td>
-<td>2TDSPG</td>
-<td><a href="https://github.com/LuzBGouveia">LuzBGouveia</a></td>
-<td><a href="https://www.linkedin.com/in/lucas-barros-gouveia-09b147355/">Lucas Barros Gouveia</a></td>
-</tr>
-
-<tr>
-<td>Milton Marcelino</td>
-<td>564836</td>
-<td>2TDSPG</td>
-<td><a href="https://github.com/MiltonMarcelino">MiltonMarcelino</a></td>
-<td><a href="http://linkedin.com/in/milton-marcelino-250298142">Milton Marcelino</a></td>
-</tr>
-
-<tr>
-<td>Luna de Carvalho Guimarães</td>
-<td>562290</td>
-<td>2TDSPG</td>
-<td><a href="https://github.com/lunaguima">lunaguima</a></td>
-<td><a href="https://www.linkedin.com/in/luna-m-guimar%C3%A3es-1850ab173/">Luna M. Guimarães</a></td>
-</tr>
-
-<tr>
-<td>Gustavo Okada</td>
-<td>563428</td>
-<td>2TDSPG</td>
-<td><a href="https://github.com/Gdev3356">GustavoOkada7268</a></td>
-<td><a href="https://www.linkedin.com/in/gustavo-okada-53a3b8359/">Gustavo Okada</a></td>
-</tr>
-
-</table>
+| Nome | RM | Turma | GitHub | LinkedIn |
+|---|---:|---|---|---|
+| Enzo Okuizumi | 561432 | 2TDSPG | [EnzoOkuizumiFiap](https://github.com/EnzoOkuizumiFiap) | [Perfil](https://www.linkedin.com/in/enzo-okuizumi-b60292256/) |
+| Lucas Barros Gouveia | 566422 | 2TDSPG | [LuzBGouveia](https://github.com/LuzBGouveia) | [Perfil](https://www.linkedin.com/in/lucas-barros-gouveia-09b147355/) |
+| Milton Marcelino | 564836 | 2TDSPG | [MiltonMarcelino](https://github.com/MiltonMarcelino) | [Perfil](http://linkedin.com/in/milton-marcelino-250298142) |
+| Luna de Carvalho Guimaraes | 562290 | 2TDSPG | [lunaguima](https://github.com/lunaguima) | [Perfil](https://www.linkedin.com/in/luna-m-guimar%C3%A3es-1850ab173/) |
+| Gustavo Okada | 563428 | 2TDSPG | [Gdev3356](https://github.com/Gdev3356) | [Perfil](https://www.linkedin.com/in/gustavo-okada-53a3b8359/) |

@@ -20,8 +20,8 @@ public class AtendimentoController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<AtendimentoResponse> findAll(@RequestParam Long familiaId) {
-        return atendimentoService.findAll(familiaId)
+    public List<AtendimentoResponse> findAll(@RequestParam Long usuarioId) {
+        return atendimentoService.findAll(usuarioId)
                 .stream()
                 .map(AtendimentoResponse::fromEntity)
                 .toList();

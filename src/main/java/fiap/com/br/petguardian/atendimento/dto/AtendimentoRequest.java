@@ -7,7 +7,7 @@ import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.status.EnumStatus;
 import fiap.com.br.petguardian.status.Status;
 import fiap.com.br.petguardian.validation.EnumValidation;
-import fiap.com.br.petguardian.veterinaria.Veterinaria;
+import fiap.com.br.petguardian.veterinario.Veterinario;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
@@ -40,9 +40,9 @@ public record AtendimentoRequest(
         Long petId,
 
         @NotNull
-        Long veterinariaId
+        Long veterinarioId
 ) {
-    public Atendimento toEntity(TipoAtendimento tipoObj, Pet pet, Veterinaria veterinaria, Status status) {
+    public Atendimento toEntity(TipoAtendimento tipoObj, Pet pet, Veterinario veterinario, Status status) {
         return Atendimento.builder()
                 .tipo(tipoObj)
                 .data(data)
@@ -50,7 +50,7 @@ public record AtendimentoRequest(
                 .valor(valor)
                 .status(status)
                 .pet(pet)
-                .veterinaria(veterinaria)
+                .veterinario(veterinario)
                 .build();
     }
 }
