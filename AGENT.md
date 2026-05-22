@@ -1,6 +1,6 @@
 # AGENT.md
 
-Ultima atualizacao: 2026-05-21T15:59
+Ultima atualizacao: 2026-05-22T17:45
 
 ## 1) Contexto do Challenge (o que este projeto precisa provar)
 Projeto acadêmico FIAP (Java Advanced) com Spring Boot para resolver um problema real com:
@@ -37,7 +37,7 @@ Se uma mudança não melhora colaboração, adesão ao tratamento ou visibilidad
 - Spring Data JPA + H2 (`jdbc:h2:mem:petguardian`)
 - OpenAPI/Swagger (`springdoc-openapi`)
 - Estrutura padrão: `Controller -> Service -> Repository -> Entity/DTO`
-- Regras de negócio concentradas em `Service`
+- Regras de negócio concentradas in `Service`
 - Tratamento global de erro em `GlobalExceptionHandler`
 
 ### 3.2 Config importante
@@ -46,7 +46,7 @@ Arquivo: `src/main/resources/application.properties`
 - `spring.jpa.show-sql=true`
 - `@EnableCaching` ativo na aplicação
 
-### 3.3 Modelo de domínio vigente
+### 3.3 Modelo de domínio vigentes
 - `Pet` <-> `Usuario` via `UsuarioPet` (N:N)
 - `UsuarioPet.responsavelPrincipal` define governança do pet
 - `Tarefa` -> `Pet` (obrigatório), `Veterinario` (obrigatório), `Usuario` executor (opcional até concluir)
@@ -128,18 +128,18 @@ Status: `OK` | `PARCIAL` | `PENDENTE`
 - Tratamento global de exceções: **OK**
 - Swagger/OpenAPI: **OK**
 - JPQL/Query Methods: **OK**
-- Paginação: **OK** (adicionada a todos os domínios principais: Usuario, Pet, Clinica, Veterinario, Atendimento, Tarefa)
-- Ordenação: **OK** (via pageable/sort)
+- Paginação: **OK** (adicionada a todos os domínios principais: Usuario, Pet, Clinica, Veterinario, Atendimento, Tarefa, Endereco)
+- Ordenação: **OK** (restaurada e parametrizada com anotações `@PageableDefault` em todos os endpoints listáveis correspondentes)
 - Busca com parâmetros: **OK** (nome em `Pet`, `Usuario`, `Clinica` e `Veterinario`; email em `Usuario` e `Veterinario`; consultas específicas por ID/Usuario em outros domínios)
 - Cache: **PARCIAL** (presente em `StatusService` e `TipoAtendimentoService`; cobertura pode ser ampliada)
 - Coesao/desacoplamento: **OK** (tags Swagger alinhadas, naming consistente em PT-BR sem acentos)
 - Testes de endpoints (prova para professor): **PENDENTE** no repositório atual
  
 ### 5.2 Entregáveis de avaliação (pontuação)
-- Cronograma + responsáveis: **PENDENTE**
+- Cronograma + responsáveis: **OK** (documentado em `documentos/cronograma.md` e resumido no `README.md`)
 - Diagramas (arquitetura, classes, DER coerente): **PENDENTE**
-- Implementação de entidades: **OK/PARCIAL** (existem, mas validar coerência final com novo modelo)
-- Maturidade REST: **OK** (endpoints de convite, historico consolidado e pontos expostos)
+- Implementação de entidades: **OK** (totalmente consistentes com a modelagem do banco de dados)
+- Maturidade REST: **OK** (endpoints de convite, historico consolidado, pontos e rede de cuidado expostos)
 - Gestão de configuração no GitHub: **PENDENTE DE EVIDÊNCIA no projeto**
 - Link público do GitHub: **PENDENTE DE EVIDÊNCIA no projeto**
 - Evidência de testes (Postman/Insomnia export): **OK** (Insomnia_2026-05-21.yaml atualizado e completo)
@@ -147,12 +147,13 @@ Status: `OK` | `PARCIAL` | `PENDENTE`
 ---
 
 ## 6) Gaps críticos atuais (prioridade alta)
-1. `README.md` esta desatualizado e contradiz o dominio atual.
+1. ~~`README.md` esta desatualizado~~ **CORRIGIDO** — README.md foi totalmente alinhado com o modelo pet-centric e contém o cronograma resumido.
 2. ~~`SwaggerConfig` ainda cita tags legadas~~ **CORRIGIDO** — Tags atualizadas para dominios reais.
 3. ~~Endpoints novos do service nao expostos~~ **CORRIGIDO** — `GET /pets/{id}/historico`, `POST /pets/{id}/convidar`, `POST /pets/{id}/convidar-email`, `GET /tarefas/pontos` expostos.
 4. Falta suite minima de testes de integracao para as regras de negocio.
-5. Falta pasta `documentos/` com os artefatos exigidos para correcao academica.
+5. Falta pasta `documentos/` com os diagramas acadêmicos exigidos. (Cronograma já adicionado sob `documentos/cronograma.md`).
 6. Mock data alinhado com regra de negocio (tarefas pendentes sem executor).
+7. ~~Restauração dos `@PageableDefault` nos controladores~~ **CORRIGIDO** — Adicionados e validados nos 7 controllers.
 
 ---
 
@@ -170,24 +171,22 @@ Status: `OK` | `PARCIAL` | `PENDENTE`
    - convite por não principal deve falhar,
    - tentativa de remover principal deve falhar.
 3. Criar pasta `documentos/` com:
-   - `cronograma.md`,
-   - `responsabilidades-equipe.md`,
+   - `cronograma.md` — **FEITO** (responsabilidade atribuída a Enzo Okuizumi).
+   - `responsabilidades-equipe.md` — **FEITO** (atribuída e centralizada no cronograma).
    - `arquitetura.png|drawio`,
    - `DER.png|drawio`,
    - `diagrama-classes-entidades.png|drawio`,
    - export Postman/Insomnia (`.json` / `.yaml`) — **FEITO** (Insomnia_2026-05-21.yaml atualizado e completo)
    - `evidencias-testes.md`.
+4. ~~Restauração de Paginação e Ordenação Padrão nos Controllers~~ **FEITO** (todas as rotas `Pageable` agora possuem anotações `@PageableDefault` com ordenações adequadas).
 
 ## P1 (forte melhoria de consistência)
-1. Atualizar `README.md` para refletir modelo pet-centric.
-2. ~~Ajustar `SwaggerConfig` para tags reais atuais~~ **FEITO** — tags atualizadas.
-3. Revisar mensagens/encoding para remover caracteres corrompidos.
-4. Revisar nomenclatura uniforme PT-BR vs EN em mensagens e docs.
+1. Revisar mensagens/encoding para remover caracteres corrompidos.
+2. Revisar nomenclatura uniforme PT-BR vs EN em mensagens e docs.
 
 ## P2 (refino técnico)
 1. Expandir cache para consultas de referência de baixo churn.
-2. ~~Aumentar cobertura de paginação/ordenação para outros endpoints listáveis~~ **FEITO** (Clinica, Veterinario, Atendimento, Tarefa paginados).
-3. Revisar contratos REST para consistência de query params e paths.
+2. Revisar contratos REST para consistência de query params e paths.
 
 ---
 

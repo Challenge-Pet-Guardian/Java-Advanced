@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +24,7 @@ public class TarefaController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Listar todas as tarefas com paginação e ordenação")
-    public Page<TarefaResponse> findAll(Pageable pageable) {
+    public Page<TarefaResponse> findAll(@PageableDefault(size = 10, page = 0, sort = "prazo", direction = Sort.Direction.ASC) Pageable pageable) {
         return tarefaService.findAll(pageable)
             .map(TarefaResponse::fromEntity);
     }
@@ -30,7 +32,7 @@ public class TarefaController {
     @GetMapping("by-usuario")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Listar tarefas pendentes por usuarioId com paginação e ordenação")
-    public Page<TarefaResponse> findAllByUsuario(@RequestParam Long usuarioId, Pageable pageable) {
+    public Page<TarefaResponse> findAllByUsuario(@RequestParam Long usuarioId, @PageableDefault(size = 10, page = 0, sort = "prazo", direction = Sort.Direction.ASC) Pageable pageable) {
         return tarefaService.findAll(usuarioId, pageable)
             .map(TarefaResponse::fromEntity);
     }

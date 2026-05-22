@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -22,7 +24,7 @@ public class PetController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Listar todos os pets com paginacao e ordenacao")
-    public Page<PetResponse> findAll(Pageable pageable) {
+    public Page<PetResponse> findAll(@PageableDefault(size = 10, page = 0, sort = "nome", direction = Sort.Direction.ASC) Pageable pageable) {
         return petService.findAll(pageable)
                 .map(PetResponse::fromEntity);
     }
@@ -30,7 +32,7 @@ public class PetController {
     @GetMapping("by-nome")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Buscar pets por nome com paginacao e ordenacao")
-    public Page<PetResponse> findByNome(@RequestParam String nome, Pageable pageable) {
+    public Page<PetResponse> findByNome(@RequestParam String nome, @PageableDefault(size = 10, page = 0, sort = "nome", direction = Sort.Direction.ASC) Pageable pageable) {
         return petService.findByNome(nome, pageable)
                 .map(PetResponse::fromEntity);
     }

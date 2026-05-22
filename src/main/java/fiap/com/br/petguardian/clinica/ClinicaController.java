@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -21,7 +23,7 @@ public class ClinicaController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Listar todas as clinicas com paginacao e ordenacao")
-    public Page<ClinicaResponse> findAll(Pageable pageable) {
+    public Page<ClinicaResponse> findAll(@PageableDefault(size = 10, page = 0, sort = "nome", direction = Sort.Direction.ASC) Pageable pageable) {
         return clinicaService.findAll(pageable)
                 .map(ClinicaResponse::fromEntity);
     }
@@ -29,7 +31,7 @@ public class ClinicaController {
     @GetMapping("by-nome")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Buscar clinicas por nome com paginacao e ordenacao")
-    public Page<ClinicaResponse> findByNome(@RequestParam String nome, Pageable pageable) {
+    public Page<ClinicaResponse> findByNome(@RequestParam String nome, @PageableDefault(size = 10, page = 0, sort = "nome", direction = Sort.Direction.ASC) Pageable pageable) {
         return clinicaService.findByNome(nome, pageable)
                 .map(ClinicaResponse::fromEntity);
     }

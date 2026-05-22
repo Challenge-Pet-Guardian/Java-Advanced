@@ -8,47 +8,47 @@
 
 ## Sobre o Projeto
 
-O **PetGuardian** e uma API REST em Spring Boot para organizar o cuidado diario de pets em cenarios com varios cuidadores.
+O **PetGuardian** é uma API REST em Spring Boot para organizar o cuidado diário de pets em cenários com vários cuidadores.
 
-A plataforma e centrada no **Pet**:
-- um pet pode ter varios cuidadores (`usuario_pet`);
-- existe um responsavel principal por pet (`respon_princ`);
-- veterinarios criam tarefas de cuidado;
+A plataforma é centrada no **Pet**:
+- um pet pode ter vários cuidadores (`usuario_pet`);
+- existe um responsável principal por pet (`respon_princ`);
+- veterinários criam tarefas de cuidado;
 - cuidadores concluem tarefas e acumulam pontos;
 - atendimentos e tarefas concluidas formam o historico consolidado do pet.
 
-### Gamificacao: Pontos por Conclusao
+### Gamificação: Pontos por Conclusão
 
 O sistema incentiva engajamento por meio de pontos:
 - cada tarefa possui `pontos_tarefa`;
 - ao concluir, o cuidador executor recebe esses pontos;
-- os pontos sao calculados por soma das tarefas concluidas do usuario.
+- os pontos são calculados por soma das tarefas concluidas do usuario.
 
 ### Rede de Cuidado (care circle)
 
-A antiga ideia de familia rigida foi substituida por uma rede dinamica por pet:
-- vinculos entre usuarios e pets em `usuario_pet`;
-- visao agregada por usuario em `/usuarios/{id}/rede-cuidado`;
-- co-cuidadores e pets compartilhados sao calculados a partir desses vinculos.
+A antiga ideia de familia rígida foi substituída por uma rede dinâmica por pet:
+- vínculos entre usuários e pets em `usuario_pet`;
+- visão agregada por usuário em `/usuarios/{id}/rede-cuidado`;
+- co-cuidadores e pets compartilhados são calculados a partir desses vínculos.
 
 ### Tarefas
 
 As tarefas representam cuidados como alimentar, medicar, passear, curativo etc.
 
 Regras atuais:
-- tarefa e criada pelo fluxo de prescricao (sem executor inicial);
+- tarefa é criada pelo fluxo de prescrição (sem executor inicial);
 - apenas usuario vinculado ao pet pode concluir;
 - status controlado por tabela (`PENDENTE`, `CONCLUIDO`, `EXPIRADO`).
 
-### Atendimentos Veterinarios
+### Atendimentos Veterinários
 
-Cada atendimento esta vinculado a:
+Cada atendimento está vinculado a:
 - um pet,
-- um veterinario,
+- um veterinário,
 - um tipo de atendimento,
 - um status.
 
-No modelo atual de codigo, **atendimento nao referencia clinica diretamente**.
+### **Arquivo Insomnia:** [Insomnia Requisições](/Insomnia_2026-05-21.yaml)
 
 ---
 
@@ -80,8 +80,6 @@ src/main/java/fiap/com/br/petguardian/
 └── telefone/            # Telefone
 ```
 
-Padrao adotado: **Controller -> Service -> Repository**, com DTOs (`Request`/`Response`) por modulo.
-
 ---
 
 ## Tecnologias Utilizadas
@@ -103,7 +101,7 @@ Padrao adotado: **Controller -> Service -> Repository**, com DTOs (`Request`/`Re
 
 ## Endpoints da API
 
-Todos os endpoints usam DTOs, Bean Validation e documentacao Swagger.
+Todos os endpoints usam DTOs, Bean Validation e documentação Swagger.
 
 ### Usuarios (`/usuarios`)
 
@@ -271,6 +269,29 @@ Tipos tratados:
 - integridade de dados (`400`)
 - recurso nao encontrado (`404`)
 - erro inesperado (`500`)
+
+---
+
+## Cronograma de Desenvolvimento
+
+Abaixo consta o resumo das principais entregas e marcos do desenvolvimento técnico da API, centralizado no desenvolvedor principal, **Enzo Okuizumi**:
+
+| Data / Período | Atividade Realizada | Responsável | Status |
+|---|---|---|---|
+| **01/05/2026** a **02/05/2026** | Inicialização, Setup e Estrutura de Configuração Base | Enzo Okuizumi | Concluído |
+| **05/05/2026** a **10/05/2026** | Modelagem JPA Completa e Mapeamento de Entidades | Enzo Okuizumi | Concluído |
+| **12/05/2026** a **14/05/2026** | Lógica de DTOs, Services e CEP | Enzo Okuizumi | Concluído |
+| **18/05/2026** a **20/05/2026** | Refatorações Complexas, Tratamento Global de Erros e Validations | Enzo Okuizumi | Concluído |
+| **21/05/2026** a **22/05/2026** | Paginação Geral (Swagger), Ordenação e Restauração de @PageableDefault | Enzo Okuizumi | Concluído |
+
+
+## Print Trello (Tirado em 22/05/2026)
+
+![Print Trello](/docs/cronograma-trello.png)
+
+## Print Trello Java
+
+![Print Trello Java](/docs/cronograma-java.png)
 
 ---
 

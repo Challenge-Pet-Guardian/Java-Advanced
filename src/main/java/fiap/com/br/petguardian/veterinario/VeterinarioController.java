@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -21,7 +23,7 @@ public class VeterinarioController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Listar todos os veterinários com paginação e ordenação")
-    public Page<VeterinarioResponse> findAll(Pageable pageable) {
+    public Page<VeterinarioResponse> findAll(@PageableDefault(size = 10, page = 0, sort = "nome", direction = Sort.Direction.ASC) Pageable pageable) {
         return veterinarioService.findAll(pageable)
                 .map(VeterinarioResponse::fromEntity);
     }
@@ -29,7 +31,7 @@ public class VeterinarioController {
     @GetMapping("by-nome")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Buscar veterinários por nome com paginação e ordenação")
-    public Page<VeterinarioResponse> findByNome(@RequestParam String nome, Pageable pageable) {
+    public Page<VeterinarioResponse> findByNome(@RequestParam String nome, @PageableDefault(size = 10, page = 0, sort = "nome", direction = Sort.Direction.ASC) Pageable pageable) {
         return veterinarioService.findByNome(nome, pageable)
                 .map(VeterinarioResponse::fromEntity);
     }
