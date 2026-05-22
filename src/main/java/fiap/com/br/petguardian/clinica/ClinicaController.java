@@ -5,11 +5,11 @@ import fiap.com.br.petguardian.clinica.dto.ClinicaResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/clinicas")
@@ -20,11 +20,18 @@ public class ClinicaController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ClinicaResponse> findAll() {
-        return clinicaService.findAll()
-                .stream()
-                .map(ClinicaResponse::fromEntity)
-                .toList();
+    @Operation(summary = "Listar todas as clinicas com paginacao e ordenacao")
+    public Page<ClinicaResponse> findAll(Pageable pageable) {
+        return clinicaService.findAll(pageable)
+                .map(ClinicaResponse::fromEntity);
+    }
+
+    @GetMapping("by-nome")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Buscar clinicas por nome com paginacao e ordenacao")
+    public Page<ClinicaResponse> findByNome(@RequestParam String nome, Pageable pageable) {
+        return clinicaService.findByNome(nome, pageable)
+                .map(ClinicaResponse::fromEntity);
     }
 
     @GetMapping("{id}")

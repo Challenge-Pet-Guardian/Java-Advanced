@@ -13,11 +13,12 @@ import fiap.com.br.petguardian.usuariopet.UsuarioPetRepository;
 import fiap.com.br.petguardian.veterinario.Veterinario;
 import fiap.com.br.petguardian.veterinario.VeterinarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +30,14 @@ public class TarefaService {
     private final VeterinarioService veterinarioService;
     private final StatusService statusService;
 
-    public List<Tarefa> findAll(Long usuarioId) {
+    public Page<Tarefa> findAll(Pageable pageable) {
         expirarTarefasPendentesAtrasadas();
-        return tarefaRepository.findTarefasPendentesDoCuidador(usuarioId);
+        return tarefaRepository.findAll(pageable);
+    }
+
+    public Page<Tarefa> findAll(Long usuarioId, Pageable pageable) {
+        expirarTarefasPendentesAtrasadas();
+        return tarefaRepository.findTarefasPendentesDoCuidador(usuarioId, pageable);
     }
 
     public Tarefa findById(Long id) {
@@ -51,19 +57,19 @@ public class TarefaService {
         }
 
         Pet pet = findPetById(request.petId());
-        Veterinario veterinario = veterinarioService.findVeterinarioById(request.veterinarioId());
-
+        Veterinario veterinario = veterinarioService.findById(request.veterinarioId());
+ 
         Tarefa tarefa = request.toEntity(null, pet, veterinario);
         tarefa.setStatus(statusService.findStatusByNome("PENDENTE"));
         tarefa.setConclusao(null);
         return tarefaRepository.save(tarefa);
     }
-
+ 
     @Transactional
     public Tarefa update(Long id, TarefaRequest request) {
         Tarefa tarefaAtual = findTarefaById(id);
         Pet pet = findPetById(request.petId());
-        Veterinario veterinario = veterinarioService.findVeterinarioById(request.veterinarioId());
+        Veterinario veterinario = veterinarioService.findById(request.veterinarioId());
 
         Usuario usuario = null;
         if (request.usuarioId() != null) {

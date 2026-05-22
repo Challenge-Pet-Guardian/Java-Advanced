@@ -15,7 +15,8 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +29,8 @@ public class EnderecoService {
     private final BairroRepository bairroRepository;
     private final RestClient restClient = RestClient.create();
 
-    public List<Endereco> findAll() {
-        return enderecoRepository.findAll();
+    public Page<Endereco> findAll(Pageable pageable) {
+        return enderecoRepository.findAll(pageable);
     }
 
     public Endereco findById(Long id) {

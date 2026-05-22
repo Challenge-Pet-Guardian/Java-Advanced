@@ -11,12 +11,13 @@ import fiap.com.br.petguardian.atendimento.dto.AtendimentoRequest;
 import fiap.com.br.petguardian.pet.Pet;
 import fiap.com.br.petguardian.pet.PetRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,9 +28,14 @@ public class AtendimentoService {
     private final StatusService statusService;
     private final TipoAtendimentoService tipoAtendimentoService;
 
-    public List<Atendimento> findAll(Long usuarioId) {
+    public Page<Atendimento> findAll(Pageable pageable) {
         expirarAtendimentosPendentesAtrasados();
-        return atendimentoRepository.findAllByUsuarioId(usuarioId);
+        return atendimentoRepository.findAll(pageable);
+    }
+
+    public Page<Atendimento> findAllByUsuario(Long usuarioId, Pageable pageable) {
+        expirarAtendimentosPendentesAtrasados();
+        return atendimentoRepository.findAllByUsuarioId(usuarioId, pageable);
     }
 
     public Atendimento findById(Long id) {
@@ -39,20 +45,20 @@ public class AtendimentoService {
 
     public Atendimento create(AtendimentoRequest atendimentoRequest) {
         Pet pet = findPetById(atendimentoRequest.petId());
-        Veterinario veterinario = veterinarioService.findVeterinarioById(atendimentoRequest.veterinarioId());
-
+        Veterinario veterinario = veterinarioService.findById(atendimentoRequest.veterinarioId());
+ 
         TipoAtendimento tipoObj = tipoAtendimentoService.findTipoAtendimentoByNome(atendimentoRequest.tipo());
         Status statusObj = statusService.findStatusByNome("PENDENTE");
         Atendimento atendimento = atendimentoRequest.toEntity(tipoObj, pet, veterinario, statusObj);
         return atendimentoRepository.save(atendimento);
     }
-
+ 
     public Atendimento update(Long id, AtendimentoRequest atendimentoRequest) {
         findAtendimentoById(id);
         expirarAtendimentosPendentesAtrasados();
-
+ 
         Pet pet = findPetById(atendimentoRequest.petId());
-        Veterinario veterinario = veterinarioService.findVeterinarioById(atendimentoRequest.veterinarioId());
+        Veterinario veterinario = veterinarioService.findById(atendimentoRequest.veterinarioId());
 
         String statusStr = atendimentoRequest.status();
 

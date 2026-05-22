@@ -7,10 +7,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/tarefas")
@@ -21,12 +21,18 @@ public class TarefaController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Listar todas as tarefas por usuarioId")
-    public List<TarefaResponse> findAll(@RequestParam Long usuarioId) {
-        return tarefaService.findAll(usuarioId)
-                .stream()
-                .map(TarefaResponse::fromEntity)
-                .toList();
+    @Operation(summary = "Listar todas as tarefas com paginação e ordenação")
+    public Page<TarefaResponse> findAll(Pageable pageable) {
+        return tarefaService.findAll(pageable)
+            .map(TarefaResponse::fromEntity);
+    }
+
+    @GetMapping("by-usuario")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Listar tarefas pendentes por usuarioId com paginação e ordenação")
+    public Page<TarefaResponse> findAllByUsuario(@RequestParam Long usuarioId, Pageable pageable) {
+        return tarefaService.findAll(usuarioId, pageable)
+            .map(TarefaResponse::fromEntity);
     }
 
     @GetMapping("{id}")
@@ -36,9 +42,9 @@ public class TarefaController {
         return TarefaResponse.fromEntity(tarefaService.findById(id));
     }
 
-    @GetMapping("/usuarios/{usuarioId}/{id}")
+    @GetMapping("by-usuario/{usuarioId}/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Buscar tarefa por usuário e ID")
+    @Operation(summary = "Buscar tarefa por usuario e ID")
     public TarefaResponse findByUsuarioIdAndTarefaId(@PathVariable Long usuarioId, @PathVariable Long id) {
         return TarefaResponse.fromEntity(tarefaService.findByUsuarioIdAndTarefaId(usuarioId, id));
     }
@@ -64,7 +70,7 @@ public class TarefaController {
         return TarefaResponse.fromEntity(tarefaService.concluir(id, tarefaConclusaoRequest));
     }
 
-    @GetMapping("/pontos")
+    @GetMapping("by-usuario/pontos")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Consultar pontos totais acumulados por um cuidador")
     public Integer calcularPontosTotaisUsuario(@RequestParam Long usuarioId) {

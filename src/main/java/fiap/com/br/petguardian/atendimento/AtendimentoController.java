@@ -5,11 +5,11 @@ import fiap.com.br.petguardian.atendimento.dto.AtendimentoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/atendimentos")
@@ -20,11 +20,18 @@ public class AtendimentoController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<AtendimentoResponse> findAll(@RequestParam Long usuarioId) {
-        return atendimentoService.findAll(usuarioId)
-                .stream()
-                .map(AtendimentoResponse::fromEntity)
-                .toList();
+    @Operation(summary = "Listar todos os atendimentos com paginacao e ordenacao")
+    public Page<AtendimentoResponse> findAll(Pageable pageable) {
+        return atendimentoService.findAll(pageable)
+                .map(AtendimentoResponse::fromEntity);
+    }
+
+    @GetMapping("by-usuario")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Listar atendimentos por usuarioId com paginacao e ordenacao")
+    public Page<AtendimentoResponse> findAllByUsuario(@RequestParam Long usuarioId, Pageable pageable) {
+        return atendimentoService.findAllByUsuario(usuarioId, pageable)
+                .map(AtendimentoResponse::fromEntity);
     }
 
     @GetMapping("{id}")

@@ -6,15 +6,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor
 public class StatusService {
     private final StatusRepository statusRepository;
 
-    public List<Status> findAll() {
-        return statusRepository.findAll();
+    public Page<Status> findAll(Pageable pageable) {
+        return statusRepository.findAll(pageable);
     }
 
     public Status findById(Long id) {
@@ -23,19 +24,10 @@ public class StatusService {
 
     @Cacheable(value = "status", key = "#nome.toUpperCase()")
     public Status findStatusByNome(String nome) {
-        EnumStatus enumStatus = parseEnumStatus(nome);
-        return statusRepository.findByNomeStatus(enumStatus).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Status '" + nome + "' não encontrado."));
+        return statusRepository.findByNomeStatus(EnumStatus.valueOf(nome.toUpperCase())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Status '" + nome + "' não encontrado."));
     }
 
     private Status findStatusById(Long id) {
         return statusRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Status com id " + id + " não encontrado."));
-    }
-
-    private EnumStatus parseEnumStatus(String nome) {
-        try {
-            return EnumStatus.valueOf(nome.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status inválido: " + nome);
-        }
     }
 }

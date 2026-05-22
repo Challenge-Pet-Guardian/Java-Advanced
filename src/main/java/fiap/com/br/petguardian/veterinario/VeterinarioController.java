@@ -5,26 +5,40 @@ import fiap.com.br.petguardian.veterinario.dto.VeterinarioResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/veterinarios")
 @RequiredArgsConstructor
-@Tag(name = "Veterinarios", description = "Gerenciamento de médicos veterinários")
+@Tag(name = "Veterinários", description = "Gerenciamento de médicos veterinários")
 public class VeterinarioController {
     private final VeterinarioService veterinarioService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<VeterinarioResponse> findAll() {
-        return veterinarioService.findAll()
-                .stream()
-                .map(VeterinarioResponse::fromEntity)
-                .toList();
+    @Operation(summary = "Listar todos os veterinários com paginação e ordenação")
+    public Page<VeterinarioResponse> findAll(Pageable pageable) {
+        return veterinarioService.findAll(pageable)
+                .map(VeterinarioResponse::fromEntity);
+    }
+
+    @GetMapping("by-nome")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Buscar veterinários por nome com paginação e ordenação")
+    public Page<VeterinarioResponse> findByNome(@RequestParam String nome, Pageable pageable) {
+        return veterinarioService.findByNome(nome, pageable)
+                .map(VeterinarioResponse::fromEntity);
+    }
+
+    @GetMapping("by-email")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Buscar veterinário por e-mail")
+    public VeterinarioResponse findByEmail(@RequestParam String email) {
+        return VeterinarioResponse.fromEntity(veterinarioService.findVeterinarioByEmail(email));
     }
 
     @GetMapping("{id}")

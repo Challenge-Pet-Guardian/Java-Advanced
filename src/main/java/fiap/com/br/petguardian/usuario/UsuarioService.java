@@ -146,7 +146,7 @@ public class UsuarioService {
         );
     }
 
-    public Usuario findUsuarioById(Long id) {
+    private Usuario findUsuarioById(Long id) {
         return usuarioRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuario com id " + id + " nao encontrado." ));
     }
 

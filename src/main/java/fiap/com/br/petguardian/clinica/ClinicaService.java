@@ -7,9 +7,10 @@ import fiap.com.br.petguardian.telefone.Telefone;
 import fiap.com.br.petguardian.telefone.TelefoneRepository;
 import fiap.com.br.petguardian.clinica.dto.ClinicaRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +19,12 @@ public class ClinicaService {
     private final EnderecoService enderecoService;
     private final TelefoneRepository telefoneRepository;
 
-    public List<Clinica> findAll() {
-        return clinicaRepository.findAll();
+    public Page<Clinica> findAll(Pageable pageable) {
+        return clinicaRepository.findAll(pageable);
+    }
+
+    public Page<Clinica> findByNome(String nome, Pageable pageable) {
+        return clinicaRepository.findByNomeContainingIgnoreCase(nome, pageable);
     }
 
     public Clinica findById(Long id) {
@@ -28,8 +33,7 @@ public class ClinicaService {
 
     public Clinica create(ClinicaRequest clinicaRequest) {
         Endereco endereco = enderecoService.findOrCreateByCepAndNumero(clinicaRequest.endereco());
-        Telefone telefone = telefoneRepository.save(
-                Telefone.builder().ddd(clinicaRequest.ddd()).numero(clinicaRequest.numeroTelefone()).build());
+        Telefone telefone = telefoneRepository.save(Telefone.builder().ddd(clinicaRequest.ddd()).numero(clinicaRequest.numeroTelefone()).build());
         Clinica clinica = clinicaRequest.toEntity(telefone, endereco);
 
         return clinicaRepository.save(clinica);
@@ -50,7 +54,7 @@ public class ClinicaService {
         clinicaRepository.deleteById(id);
     }
 
-    public Clinica findClinicaById(Long id) {
+    private Clinica findClinicaById(Long id) {
         return clinicaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Clinica com id " + id + " nao encontrada."));
     }
 }

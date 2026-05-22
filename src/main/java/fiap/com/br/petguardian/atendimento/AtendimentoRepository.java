@@ -11,9 +11,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> {
     @Query("select distinct a from Atendimento a join a.pet p join p.usuarioPets up where up.usuario.id = :usuarioId")
-    List<Atendimento> findAllByUsuarioId(@Param("usuarioId") Long usuarioId);
+    Page<Atendimento> findAllByUsuarioId(@Param("usuarioId") Long usuarioId, Pageable pageable);
 
     List<Atendimento> findAllByPetIdOrderByDataDesc(Long petId);
 

@@ -109,18 +109,21 @@ Todos os endpoints usam DTOs, Bean Validation e documentacao Swagger.
 
 | Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/usuarios` | Listar usuarios (paginado, filtro `?nome=`) |
-| `GET` | `/usuarios/{id}` | Buscar usuario por ID |
-| `GET` | `/usuarios/{id}/rede-cuidado` | Visao agregada da rede de cuidado |
-| `POST` | `/usuarios` | Criar usuario |
-| `PUT` | `/usuarios/{id}` | Atualizar usuario |
-| `DELETE` | `/usuarios/{id}` | Deletar usuario |
+| `GET` | `/usuarios` | Listar todos os usuários (paginado) |
+| `GET` | `/usuarios/by-nome` | Buscar usuários por nome (paginado, `?nome=`) |
+| `GET` | `/usuarios/by-email` | Buscar usuário por e-mail (`?email=`) |
+| `GET` | `/usuarios/{id}` | Buscar usuário por ID |
+| `GET` | `/usuarios/{id}/rede-cuidado` | Visao agregada da rede de cuidado (Care Circle) |
+| `POST` | `/usuarios` | Criar usuário |
+| `PUT` | `/usuarios/{id}` | Atualizar usuário |
+| `DELETE` | `/usuarios/{id}` | Deletar usuário |
 
 ### Pets (`/pets`)
 
 | Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/pets` | Listar pets (paginado, filtro `?nome=`) |
+| `GET` | `/pets` | Listar todos os pets (paginado) |
+| `GET` | `/pets/by-nome` | Buscar pets por nome (paginado, `?nome=`) |
 | `GET` | `/pets/{id}` | Buscar pet por ID |
 | `GET` | `/pets/{id}/historico` | Historico consolidado (atendimentos + tarefas concluidas) |
 | `POST` | `/pets` | Criar pet |
@@ -128,27 +131,29 @@ Todos os endpoints usam DTOs, Bean Validation e documentacao Swagger.
 | `DELETE` | `/pets/{id}` | Deletar pet |
 | `POST` | `/pets/{id}/usuarios/{usuarioId}` | Vincular usuario ao pet (`?principal=true/false`) |
 | `DELETE` | `/pets/{id}/usuarios/{usuarioId}` | Desvincular usuario do pet |
-| `POST` | `/pets/{id}/convidar` | Convidar co-cuidador por ID (`responsavelPrincipalId`, `usuarioConvidadoId`) |
-| `POST` | `/pets/{id}/convidar-email` | Convidar co-cuidador por e-mail (`responsavelPrincipalId`, `email`) |
+| `POST` | `/pets/{id}/convidar` | Convidar co-cuidador por ID (`?responsavelPrincipalId=&usuarioConvidadoId=`) |
+| `POST` | `/pets/{id}/convidar-email` | Convidar co-cuidador por e-mail (`?responsavelPrincipalId=&email=`) |
 
 ### Tarefas (`/tarefas`)
 
 | Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/tarefas?usuarioId={id}` | Tarefas pendentes do cuidador |
+| `GET` | `/tarefas` | Listar todas as tarefas (paginado) |
+| `GET` | `/tarefas/by-usuario` | Listar tarefas pendentes por usuario (paginado, `?usuarioId=`) |
 | `GET` | `/tarefas/{id}` | Buscar tarefa por ID |
-| `GET` | `/tarefas/usuarios/{usuarioId}/{id}` | Buscar tarefa por usuario + ID |
+| `GET` | `/tarefas/by-usuario/{usuarioId}/{id}` | Buscar tarefa por usuario e ID |
 | `POST` | `/tarefas` | Criar tarefa |
 | `PUT` | `/tarefas/{id}` | Atualizar tarefa |
-| `PATCH` | `/tarefas/{id}/concluir` | Concluir tarefa |
-| `GET` | `/tarefas/pontos?usuarioId={id}` | Pontos totais do cuidador |
+| `PATCH` | `/tarefas/{id}/concluir` | Concluir tarefa (enviar `concluinteId` no body) |
+| `GET` | `/tarefas/by-usuario/pontos` | Pontos totais do cuidador (`?usuarioId=`) |
 | `DELETE` | `/tarefas/{id}` | Deletar tarefa |
 
 ### Atendimentos (`/atendimentos`)
 
 | Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/atendimentos?usuarioId={id}` | Listar atendimentos visiveis ao cuidador |
+| `GET` | `/atendimentos` | Listar todos os atendimentos (paginado) |
+| `GET` | `/atendimentos/by-usuario` | Listar atendimentos por usuario (paginado, `?usuarioId=`) |
 | `GET` | `/atendimentos/{id}` | Buscar atendimento por ID |
 | `POST` | `/atendimentos` | Criar atendimento |
 | `PUT` | `/atendimentos/{id}` | Atualizar atendimento |
@@ -158,7 +163,8 @@ Todos os endpoints usam DTOs, Bean Validation e documentacao Swagger.
 
 | Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/clinicas` | Listar clinicas |
+| `GET` | `/clinicas` | Listar todas as clinicas (paginado) |
+| `GET` | `/clinicas/by-nome` | Buscar clinicas por nome (paginado, `?nome=`) |
 | `GET` | `/clinicas/{id}` | Buscar clinica por ID |
 | `POST` | `/clinicas` | Criar clinica |
 | `PUT` | `/clinicas/{id}` | Atualizar clinica |
@@ -168,7 +174,9 @@ Todos os endpoints usam DTOs, Bean Validation e documentacao Swagger.
 
 | Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/veterinarios` | Listar veterinarios |
+| `GET` | `/veterinarios` | Listar todos os veterinarios (paginado) |
+| `GET` | `/veterinarios/by-nome` | Buscar veterinarios por nome (paginado, `?nome=`) |
+| `GET` | `/veterinarios/by-email` | Buscar veterinario por e-mail (`?email=`) |
 | `GET` | `/veterinarios/{id}` | Buscar veterinario por ID |
 | `POST` | `/veterinarios` | Criar veterinario |
 | `PUT` | `/veterinarios/{id}` | Atualizar veterinario |
@@ -178,7 +186,7 @@ Todos os endpoints usam DTOs, Bean Validation e documentacao Swagger.
 
 | Metodo | Endpoint | Descricao |
 |---|---|---|
-| `GET` | `/enderecos` | Listar enderecos |
+| `GET` | `/enderecos` | Listar todos os enderecos (paginado) |
 | `GET` | `/enderecos/{id}` | Buscar endereco por ID |
 | `POST` | `/enderecos` | Criar endereco |
 | `PUT` | `/enderecos/{id}` | Atualizar endereco |

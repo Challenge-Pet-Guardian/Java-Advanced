@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 public interface TarefaRepository extends JpaRepository<Tarefa, Long> {
     @Query("select t.id from Tarefa t where t.usuario.id = :usuarioId")
     Set<Long> findIdsByUsuarioId(@Param("usuarioId") Long usuarioId);
@@ -46,9 +49,8 @@ public interface TarefaRepository extends JpaRepository<Tarefa, Long> {
             "join t.pet p " +
             "join p.usuarioPets up " +
             "where up.usuario.id = :usuarioId " +
-            "and t.status.nome_status = fiap.com.br.petguardian.status.EnumStatus.PENDENTE " +
-            "order by t.prazo asc")
-    List<Tarefa> findTarefasPendentesDoCuidador(@Param("usuarioId") Long usuarioId);
+            "and t.status.nome_status = fiap.com.br.petguardian.status.EnumStatus.PENDENTE")
+    Page<Tarefa> findTarefasPendentesDoCuidador(@Param("usuarioId") Long usuarioId, Pageable pageable);
 
     @Query("select coalesce(sum(t.pontosTarefa), 0) from Tarefa t " +
             "where t.usuario.id = :usuarioId " +

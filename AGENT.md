@@ -128,13 +128,13 @@ Status: `OK` | `PARCIAL` | `PENDENTE`
 - Tratamento global de exceções: **OK**
 - Swagger/OpenAPI: **OK**
 - JPQL/Query Methods: **OK**
-- Paginação: **OK** (principalmente `Pet` e `Usuario`)
+- Paginação: **OK** (adicionada a todos os domínios principais: Usuario, Pet, Clinica, Veterinario, Atendimento, Tarefa)
 - Ordenação: **OK** (via pageable/sort)
-- Busca com parâmetros: **OK** (nome em `Pet` e `Usuario`; consultas específicas em outros domínios)
+- Busca com parâmetros: **OK** (nome em `Pet`, `Usuario`, `Clinica` e `Veterinario`; email em `Usuario` e `Veterinario`; consultas específicas por ID/Usuario em outros domínios)
 - Cache: **PARCIAL** (presente em `StatusService` e `TipoAtendimentoService`; cobertura pode ser ampliada)
 - Coesao/desacoplamento: **OK** (tags Swagger alinhadas, naming consistente em PT-BR sem acentos)
 - Testes de endpoints (prova para professor): **PENDENTE** no repositório atual
-
+ 
 ### 5.2 Entregáveis de avaliação (pontuação)
 - Cronograma + responsáveis: **PENDENTE**
 - Diagramas (arquitetura, classes, DER coerente): **PENDENTE**
@@ -142,7 +142,7 @@ Status: `OK` | `PARCIAL` | `PENDENTE`
 - Maturidade REST: **OK** (endpoints de convite, historico consolidado e pontos expostos)
 - Gestão de configuração no GitHub: **PENDENTE DE EVIDÊNCIA no projeto**
 - Link público do GitHub: **PENDENTE DE EVIDÊNCIA no projeto**
-- Evidência de testes (Postman/Insomnia export): **PENDENTE**
+- Evidência de testes (Postman/Insomnia export): **OK** (Insomnia_2026-05-21.yaml atualizado e completo)
 
 ---
 
@@ -175,7 +175,7 @@ Status: `OK` | `PARCIAL` | `PENDENTE`
    - `arquitetura.png|drawio`,
    - `DER.png|drawio`,
    - `diagrama-classes-entidades.png|drawio`,
-   - export Postman/Insomnia (`.json`),
+   - export Postman/Insomnia (`.json` / `.yaml`) — **FEITO** (Insomnia_2026-05-21.yaml atualizado e completo)
    - `evidencias-testes.md`.
 
 ## P1 (forte melhoria de consistência)
@@ -186,7 +186,7 @@ Status: `OK` | `PARCIAL` | `PENDENTE`
 
 ## P2 (refino técnico)
 1. Expandir cache para consultas de referência de baixo churn.
-2. Aumentar cobertura de paginação/ordenação para outros endpoints listáveis.
+2. ~~Aumentar cobertura de paginação/ordenação para outros endpoints listáveis~~ **FEITO** (Clinica, Veterinario, Atendimento, Tarefa paginados).
 3. Revisar contratos REST para consistência de query params e paths.
 
 ---
