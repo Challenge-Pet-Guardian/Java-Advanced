@@ -6,7 +6,7 @@
 
 ---
 
-## Repositório Github:
+## Repositório Github
 
 [Repositório Github](https://github.com/Challenge-Pet-Guardian/Java-Advanced)
 
