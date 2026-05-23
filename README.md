@@ -4,12 +4,33 @@
 >
 > Plataforma colaborativa para gestao de cuidados de pets, com tarefas prescritas por veterinarios e execucao por cuidadores.
 
+<p>
+  <img src="https://img.shields.io/badge/Java-17-007396?logo=openjdk&logoColor=white" alt="Java 17" />
+  <img src="https://img.shields.io/badge/Spring_Boot-4.0.6-6DB33F?logo=springboot&logoColor=white" alt="Spring Boot 4.0.6" />
+  <img src="https://img.shields.io/badge/Build-Maven-C71A36?logo=apachemaven&logoColor=white" alt="Maven" />
+  <img src="https://img.shields.io/badge/Database-H2-0B5394" alt="H2" />
+  <img src="https://img.shields.io/badge/API-REST-2B2B2B" alt="REST API" />
+</p>
+
+| Link rápido | URL                                                     |
+|---|---------------------------------------------------------|
+| Repositório GitHub | https://github.com/Challenge-Pet-Guardian/Java-Advanced |
+| Arquivo Insomnia | [/docs/Insomnia_2026-05-21.yaml](/docs/Insomnia_2026-05-21.yaml)      |
+| Swagger UI (local) | http://localhost:8080/swagger-ui/index.html             |
+
 ---
 
-## Repositório Github
+## Integrantes
 
-[Repositório Github](https://github.com/Challenge-Pet-Guardian/Java-Advanced)
+| Nome | RM | Turma | GitHub | LinkedIn |
+|---|---:|---|---|---|
+| Enzo Okuizumi | 561432 | 2TDSPG | [EnzoOkuizumiFiap](https://github.com/EnzoOkuizumiFiap) | [Perfil](https://www.linkedin.com/in/enzo-okuizumi-b60292256/) |
+| Lucas Barros Gouveia | 566422 | 2TDSPG | [LuzBGouveia](https://github.com/LuzBGouveia) | [Perfil](https://www.linkedin.com/in/lucas-barros-gouveia-09b147355/) |
+| Milton Marcelino | 564836 | 2TDSPG | [MiltonMarcelino](https://github.com/MiltonMarcelino) | [Perfil](http://linkedin.com/in/milton-marcelino-250298142) |
+| Luna de Carvalho Guimaraes | 562290 | 2TDSPG | [lunaguima](https://github.com/lunaguima) | [Perfil](https://www.linkedin.com/in/luna-m-guimar%C3%A3es-1850ab173/) |
+| Gustavo Okada | 563428 | 2TDSPG | [Gdev3356](https://github.com/Gdev3356) | [Perfil](https://www.linkedin.com/in/gustavo-okada-53a3b8359/) |
 
+---
 
 ## Sobre o Projeto
 
@@ -21,6 +42,8 @@ A plataforma é centrada no **Pet**:
 - veterinários criam tarefas de cuidado;
 - cuidadores concluem tarefas e acumulam pontos;
 - atendimentos e tarefas concluidas formam o historico consolidado do pet.
+
+---
 
 ### Gamificação: Pontos por Conclusão
 
@@ -45,6 +68,8 @@ Regras atuais:
 - apenas usuario vinculado ao pet pode concluir;
 - status controlado por tabela (`PENDENTE`, `CONCLUIDO`, `EXPIRADO`).
 
+---
+
 ### Atendimentos Veterinários
 
 Cada atendimento está vinculado a:
@@ -53,7 +78,16 @@ Cada atendimento está vinculado a:
 - um tipo de atendimento,
 - um status.
 
-### **Arquivo Insomnia:** [Insomnia Requisições](/Insomnia_2026-05-21.yaml)
+---
+
+## Modelagem Lógica e Relacional do Banco de Dados
+
+### Modelo Lógico 
+![Modelo Lógico](docs/Logical.png)
+
+### Modelo Relacional
+
+![Modelo Relacional](docs/Relational.png)
 
 ---
 
@@ -89,18 +123,17 @@ src/main/java/fiap/com/br/petguardian/
 
 ## Tecnologias Utilizadas
 
-| Tecnologia | Versao | Finalidade |
-|---|---|---|
-| Java | 17 | Linguagem principal |
-| Spring Boot | 4.0.6 | Framework principal |
-| Spring Data JPA | - | Persistencia e ORM |
-| Spring Validation | - | Bean Validation |
-| Spring Cache | - | Cache de consultas |
-| Spring Actuator | - | Observabilidade |
-| SpringDoc OpenAPI | 3.0.3 | Documentacao Swagger |
-| H2 Database | - | Banco em memoria |
-| Lombok | - | Reducao de boilerplate |
-| Maven | - | Build e dependencias |
+| Tecnologia | Finalidade |
+|---|---|
+| Java 17 | Linguagem principal |
+| Spring Boot 4.0.6 | Framework principal |
+| Spring Data JPA | Persistencia e ORM |
+| Spring Validation | Bean Validation |
+| Spring Cache | Cache de consultas |
+| SpringDoc OpenAPI | Documentacao Swagger |
+| H2 Database | Banco em memoria |
+| Lombok | Reducao de boilerplate |
+| Maven | Build e dependencias |
 
 ---
 
@@ -232,26 +265,6 @@ Configuracao H2:
 
 ---
 
-## Estrutura de Pastas
-
-```
-Java-Advanced/
-├── src/
-│   ├── main/
-│   │   ├── java/fiap/com/br/petguardian/
-│   │   └── resources/application.properties
-│   └── test/
-├── pom.xml
-├── mvnw
-├── mvnw.cmd
-├── AGENT.md
-└── README.md
-```
-
-> `documentos/` deve concentrar os artefatos de entrega (diagramas, cronograma e export de testes).
-
----
-
 ## Tratamento de Erros
 
 A API usa handler global e respostas padronizadas.
@@ -299,13 +312,3 @@ Abaixo consta o resumo das principais entregas e marcos do desenvolvimento técn
 ![Print Trello Java](/docs/cronograma-java.png)
 
 ---
-
-## Integrantes
-
-| Nome | RM | Turma | GitHub | LinkedIn |
-|---|---:|---|---|---|
-| Enzo Okuizumi | 561432 | 2TDSPG | [EnzoOkuizumiFiap](https://github.com/EnzoOkuizumiFiap) | [Perfil](https://www.linkedin.com/in/enzo-okuizumi-b60292256/) |
-| Lucas Barros Gouveia | 566422 | 2TDSPG | [LuzBGouveia](https://github.com/LuzBGouveia) | [Perfil](https://www.linkedin.com/in/lucas-barros-gouveia-09b147355/) |
-| Milton Marcelino | 564836 | 2TDSPG | [MiltonMarcelino](https://github.com/MiltonMarcelino) | [Perfil](http://linkedin.com/in/milton-marcelino-250298142) |
-| Luna de Carvalho Guimaraes | 562290 | 2TDSPG | [lunaguima](https://github.com/lunaguima) | [Perfil](https://www.linkedin.com/in/luna-m-guimar%C3%A3es-1850ab173/) |
-| Gustavo Okada | 563428 | 2TDSPG | [Gdev3356](https://github.com/Gdev3356) | [Perfil](https://www.linkedin.com/in/gustavo-okada-53a3b8359/) |
