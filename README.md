@@ -24,11 +24,11 @@
 
 | Nome | RM | Turma | GitHub | LinkedIn |
 |---|---:|---|---|---|
-| Enzo Okuizumi | 561432 | 2TDSPG | [EnzoOkuizumiFiap](https://github.com/EnzoOkuizumiFiap) | [Perfil](https://www.linkedin.com/in/enzo-okuizumi-b60292256/) |
-| Lucas Barros Gouveia | 566422 | 2TDSPG | [LuzBGouveia](https://github.com/LuzBGouveia) | [Perfil](https://www.linkedin.com/in/lucas-barros-gouveia-09b147355/) |
-| Milton Marcelino | 564836 | 2TDSPG | [MiltonMarcelino](https://github.com/MiltonMarcelino) | [Perfil](http://linkedin.com/in/milton-marcelino-250298142) |
-| Luna de Carvalho Guimaraes | 562290 | 2TDSPG | [lunaguima](https://github.com/lunaguima) | [Perfil](https://www.linkedin.com/in/luna-m-guimar%C3%A3es-1850ab173/) |
-| Gustavo Okada | 563428 | 2TDSPG | [Gdev3356](https://github.com/Gdev3356) | [Perfil](https://www.linkedin.com/in/gustavo-okada-53a3b8359/) |
+| Enzo Okuizumi | 561432 | 2TDSPG | [EnzoOkuizumiFiap](https://github.com/EnzoOkuizumiFiap) | [Enzo Okuizumi](https://www.linkedin.com/in/enzo-okuizumi-b60292256/) |
+| Lucas Barros Gouveia | 566422 | 2TDSPG | [LuzBGouveia](https://github.com/LuzBGouveia) | [Lucas Barros Gouveia](https://www.linkedin.com/in/lucas-barros-gouveia-09b147355/) |
+| Milton Marcelino | 564836 | 2TDSPG | [MiltonMarcelino](https://github.com/MiltonMarcelino) | [Milton Marcelino](http://linkedin.com/in/milton-marcelino-250298142) |
+| Luna de Carvalho Guimaraes | 562290 | 2TDSPG | [lunaguima](https://github.com/lunaguima) | [Luna M. Guimaraes](https://www.linkedin.com/in/luna-m-guimar%C3%A3es-1850ab173/) |
+| Gustavo Okada | 563428 | 2TDSPG | [Gdev3356](https://github.com/Gdev3356) | [Gustavo Okada](https://www.linkedin.com/in/gustavo-okada-53a3b8359/) |
 
 ---
 
