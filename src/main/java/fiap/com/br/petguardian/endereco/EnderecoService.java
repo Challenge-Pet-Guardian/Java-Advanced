@@ -54,8 +54,9 @@ public class EnderecoService {
     }
 
     public Endereco findOrCreateByCepAndNumero(EnderecoRequest enderecoRequest) {
-        ResolvedAddress resolvedAddress = resolveAddressFromCep(enderecoRequest.cep());
-        return enderecoRepository.findByCepAndNumeroAndBairroId(enderecoRequest.cep(), enderecoRequest.numero(), resolvedAddress.bairro().getId())
+        String cleanCep = enderecoRequest.cep().replaceAll("\\D", "");
+        ResolvedAddress resolvedAddress = resolveAddressFromCep(cleanCep);
+        return enderecoRepository.findByCepAndNumeroAndBairroId(cleanCep, enderecoRequest.numero(), resolvedAddress.bairro().getId())
                 .orElseGet(() -> enderecoRepository.save(enderecoRequest.toEntity(resolvedAddress.rua(), resolvedAddress.bairro())));
     }
 
@@ -64,7 +65,8 @@ public class EnderecoService {
     }
 
     private Endereco buildEnderecoFromCep(EnderecoRequest enderecoRequest) {
-        ResolvedAddress resolvedAddress = resolveAddressFromCep(enderecoRequest.cep());
+        String cleanCep = enderecoRequest.cep().replaceAll("\\D", "");
+        ResolvedAddress resolvedAddress = resolveAddressFromCep(cleanCep);
         return enderecoRequest.toEntity(resolvedAddress.rua(), resolvedAddress.bairro());
     }
 
