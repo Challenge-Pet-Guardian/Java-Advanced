@@ -15,7 +15,7 @@ public record EnderecoRequest(
 ) {
     public Endereco toEntity(String rua, Bairro bairro) {
         return Endereco.builder()
-                .cep(cep)
+                .cep(cep.replaceAll("\\D", ""))
                 .numero(numero)
                 .rua(rua)
                 .bairro(bairro)

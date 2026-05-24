@@ -1,6 +1,7 @@
 package fiap.com.br.petguardian.pet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import fiap.com.br.petguardian.atendimento.Atendimento;
 import fiap.com.br.petguardian.pet.raca.Raca;
 import fiap.com.br.petguardian.tarefa.Tarefa;
 import fiap.com.br.petguardian.usuariopet.UsuarioPet;
@@ -47,11 +48,19 @@ public class Pet {
     @Column(nullable = false)
     private Boolean castrado;
 
-    @OneToMany(mappedBy = "pet")
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<Tarefa> tarefas;
+    @Builder.Default
+    private Set<Tarefa> tarefas = new HashSet<>();
+
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @Builder.Default
+    private Set<Atendimento> atendimentos = new HashSet<>();
 
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

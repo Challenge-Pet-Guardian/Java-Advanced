@@ -37,8 +37,7 @@ public class VeterinarioService {
 
     public Veterinario create(VeterinarioRequest request) {
         Clinica clinica = request.clinicaId() == null ? null : clinicaService.findById(request.clinicaId());
-        Telefone telefone = telefoneRepository.save(
-                Telefone.builder().ddd(request.ddd()).numero(request.numeroTelefone()).build());
+        Telefone telefone = telefoneRepository.save(Telefone.builder().ddd(request.ddd()).numero(request.numeroTelefone()).build());
         Veterinario veterinario = request.toEntity(telefone, clinica);
         return veterinarioRepository.save(veterinario);
     }
@@ -46,8 +45,7 @@ public class VeterinarioService {
     public Veterinario update(Long id, VeterinarioRequest request) {
         findVeterinarioById(id);
         Clinica clinica = request.clinicaId() == null ? null : clinicaService.findById(request.clinicaId());
-        Telefone telefone = telefoneRepository.save(
-                Telefone.builder().ddd(request.ddd()).numero(request.numeroTelefone()).build());
+        Telefone telefone = telefoneRepository.save(Telefone.builder().ddd(request.ddd()).numero(request.numeroTelefone()).build());
         Veterinario veterinario = request.toEntity(telefone, clinica);
         veterinario.setId(id);
         return veterinarioRepository.save(veterinario);

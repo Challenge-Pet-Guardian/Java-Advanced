@@ -42,8 +42,7 @@ public class ClinicaService {
     public Clinica update(Long id, ClinicaRequest clinicaRequest) {
         findClinicaById(id);
         Endereco endereco = enderecoService.findOrCreateByCepAndNumero(clinicaRequest.endereco());
-        Telefone telefone = telefoneRepository.save(
-                Telefone.builder().ddd(clinicaRequest.ddd()).numero(clinicaRequest.numeroTelefone()).build());
+        Telefone telefone = telefoneRepository.save(Telefone.builder().ddd(clinicaRequest.ddd()).numero(clinicaRequest.numeroTelefone()).build());
         Clinica clinica = clinicaRequest.toEntity(telefone, endereco);
         clinica.setId(id);
         return clinicaRepository.save(clinica);
